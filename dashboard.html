@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Font Awesome for icons -->
+
+
+
+
+
+
+  <!-- jQuery أولًا -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/locales-all.min.js"></script>
+
+
+
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+
+
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <button class="btn btn-dark" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      <a class="navbar-brand mx-3" href="#">Admin Dashboard</a>
+      
+      <div class="ms-auto text-white d-flex align-items-center">
+        <i class="fas fa-user-circle fa-lg me-2"></i>
+        <span id="userInfo">Loading...</span>
+      </div>
+
+      <a class="btn btn-outline-light ms-3" href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </nav>
+
+  <!-- <button class="btn btn-success" id="addArticleBtn">إضافة مقال جديد</button> -->
+
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div id="sidebar" class="bg-dark text-white">
+      <div class="sidebar-header p-3 d-flex justify-content-between align-items-center">
+        <h4 class="m-0">Dashboard</h4>
+        <button class="btn btn-sm btn-outline-light" id="sidebarClose"><i class="fas fa-times"></i></button>
+      </div>
+      <ul class="list-unstyled">
+        <li><a href="#" class="sidebar-link" id="usersLink"><i class="fas fa-users"></i> Users</a></li>
+        <li><a href="#" class="sidebar-link" id="patientsLink"><i class="fas fa-user-injured"></i> Patients</a></li>
+        <li><a href="#" class="sidebar-link" id="appointmentsLink"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+        <li><a href="#" class="sidebar-link" id="articlesLink"><i class="fas fa-newspaper"></i> Articles</a></li>
+      </ul>
+      <button class="btn btn-success w-100 my-3" id="addArticleBtn"><i class="fas fa-plus"></i> إضافة مقال جديد</button>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content" class="p-3">
+      <div id="content">
+        <h3>Welcome to the Dashboard</h3>
+        <p>Select an option from the sidebar to get started.</p>
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Popup لعرض المقال -->
+  <div class="modal fade" id="viewArticlePopup" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="articleModalLabel">Article Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="articleDetails">
+          <!-- محتوى المقال سيتم تحميله هنا -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Popup لتعديل المقال -->
+  <div id="editArticlePopup" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Article</h5>
+          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+        <div class="modal-body">
+          <form id="editArticleForm">
+            <input type="hidden" id="editArticleId">
+
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="editTitle" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label>Summary</label>
+              <textarea id="editSummary" class="form-control" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Content</label>
+              <textarea id="editContent" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Author</label>
+              <input type="text" id="editAuthor" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="editCategory" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label>Keywords (comma-separated)</label>
+              <input type="text" id="editKeywords" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Sources (comma-separated)</label>
+              <input type="text" id="editSources" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Tags (comma-separated)</label>
+              <input type="text" id="editTags" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Images (comma-separated URLs)</label>
+              <input type="text" id="editImages" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Videos (comma-separated URLs)</label>
+              <input type="text" id="editVideos" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Status</label>
+              <select id="editStatus" class="form-control">
+                <option value="Draft">Draft</option>
+                <option value="Published">Published</option>
+              </select>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" id="editCommentsEnabled" class="form-check-input">
+              <label class="form-check-label">Enable Comments</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Adding Article -->
+  <div class="modal fade" id="addArticlePopup" tabindex="-1" aria-labelledby="addArticlePopupLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addArticlePopupLabel">إضافة مقال جديد</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addArticleForm">
+            <div class="mb-3">
+              <label for="title" class="form-label">العنوان</label>
+              <input type="text" class="form-control" id="addtitle" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="content" class="form-label">المحتوى</label>
+              <textarea class="form-control" id="addcontent" rows="5" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="summary" class="form-label">الملخص</label>
+              <textarea class="form-control" id="addsummary" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">الفئة</label>
+              <input type="text" class="form-control" id="addcategory" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="author" class="form-label">المؤلف</label>
+              <input type="text" class="form-control" id="addauthor" required>
+            </div>
+
+            <!-- صور المقال -->
+            <div class="mb-3">
+              <label for="images" class="form-label">الصور (روابط URL مفصولة بفاصلة)</label>
+              <input type="text" class="form-control" id="addimages" placeholder="مثال: image1.jpg, image2.jpg">
+            </div>
+
+            <!-- فيديوهات المقال -->
+            <div class="mb-3">
+              <label for="videos" class="form-label">الفيديوهات (روابط URL مفصولة بفاصلة)</label>
+              <input type="text" class="form-control" id="addvideos" placeholder="مثال: video1.mp4, video2.mp4">
+            </div>
+
+            <!-- الكلمات المفتاحية -->
+            <div class="mb-3">
+              <label for="keywords" class="form-label">الكلمات المفتاحية (مفصولة بفاصلة)</label>
+              <input type="text" class="form-control" id="addkeywords" placeholder="مثال: مفتاح1, مفتاح2">
+            </div>
+
+            <!-- المصادر -->
+            <div class="mb-3">
+              <label for="sources" class="form-label">المصادر (روابط أو نصوص مفصولة بفاصلة)</label>
+              <input type="text" class="form-control" id="addsources" placeholder="مثال: مصدر1, مصدر2">
+            </div>
+
+            <!-- الوسوم (Tags) -->
+            <div class="mb-3">
+              <label for="tags" class="form-label">الوسوم (مفصولة بفاصلة)</label>
+              <input type="text" class="form-control" id="addtags" placeholder="مثال: وسم1, وسم2">
+            </div>
+
+            <!-- تفعيل التعليقات -->
+            <div class="mb-3">
+              <label class="form-label">تمكين التعليقات</label>
+              <select class="form-control" id="addcomments_enabled">
+                <option value="true">نعم</option>
+                <option value="false" selected>لا</option>
+              </select>
+            </div>
+
+            <!-- حالة المقال -->
+            <div class="mb-3">
+              <label class="form-label">حالة المقال</label>
+              <select class="form-control" id="addstatus">
+                <option value="Published">منشور</option>
+                <option value="Draft" selected>مسودة</option>
+              </select>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+              <button type="submit" class="btn btn-primary">إضافة المقال</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- تحميل dashboard.js بعد جميع المكتبات -->
+  <script src="assets/js/dashboard.js"></script>
+</body>
+
+</html>
