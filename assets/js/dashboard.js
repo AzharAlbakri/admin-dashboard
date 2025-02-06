@@ -9,6 +9,25 @@ if (!token) {
 $('#addArticleBtn').click(function () {
   $('#addArticlePopup').modal('show');
 });
+
+
+// تهيئة محرر Quill
+var quill = new Quill('#editor-container', {
+  theme: 'snow', // مظهر المحرر
+  modules: {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline'],
+      [{ color: [] }, { background: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['image', 'link', 'blockquote', 'code-block'],
+      [{ align: [] }],
+      ['clean'] // إزالة التنسيق
+    ]
+  }
+});
+
+
 $(document).ready(function () {
 
 // Sidebar Toggle
@@ -536,6 +555,68 @@ $('#addArticleForm').on('submit', function (e) {
     },
     error: function () {
       alert('فشل إضافة المقال.');
+    }
+  });
+});
+
+
+$('#addServiceLink').click(function() {
+  $('#addServiceContent').show();  // إظهار النموذج
+});
+
+// إرسال البيانات إلى الخادم عند الحفظ
+// $('#addServiceForm').submit(function(e) {
+//   e.preventDefault();
+
+//   const serviceData = {
+//     title: $('#serviceTitle').val(),
+//     slug: "test",//$('#serviceSlug').val(),
+//     subCategoryId: $('#serviceSubCategory').val(),
+//     content: JSON.parse($('#serviceContent').val()) // تأكد من تحويل المحتوى إلى JSON
+//   };
+
+//   $.ajax({
+//     url: 'http://localhost:3000/dashboard/addService',  // تأكد من تحديد الـ API الخاص بك
+//     method: 'POST',
+//     headers: { Authorization: `Bearer ${token}` },
+//     contentType: 'application/json',
+//     data: JSON.stringify(serviceData),
+//     success: function(response) {
+//       alert('تم إضافة الخدمة بنجاح');
+//       $('#addServiceContent').hide();  // إخفاء النموذج بعد الإضافة
+//     },
+//     error: function(error) {
+//       alert('حدث خطأ أثناء إضافة الخدمة');
+//     }
+//   });
+// });
+
+
+
+
+//اضافة الeditor
+$('#addServiceForm').submit(function (e) {
+  e.preventDefault();
+
+  var serviceData = {
+    title: $('#serviceTitle').val(),
+    slug: "test1",
+    subCategoryId: $('#serviceSubCategory').val(),
+    content: quill.root.innerHTML // جلب المحتوى كـ HTML
+  };
+
+  $.ajax({
+    url: 'http://localhost:3000/dashboard/addService',
+    type: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    contentType: 'application/json',
+    data: JSON.stringify(serviceData),
+    success: function(response) {
+      alert('تمت إضافة الخدمة بنجاح');
+      location.reload();
+    },
+    error: function(xhr) {
+      alert('حدث خطأ: ' + xhr.responseText);
     }
   });
 });
