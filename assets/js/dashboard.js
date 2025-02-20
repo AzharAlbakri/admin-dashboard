@@ -1,5 +1,5 @@
-
-// تحقق من وجود التوكن
+//#region TOKEN
+// Check the token
 const token = localStorage.getItem('token');
 if (!token) {
   alert('Unauthorized! Please login first.');
@@ -9,7 +9,10 @@ if (!token) {
 $('#addArticleBtn').click(function () {
   $('#addArticlePopup').modal('show');
 });
+//#endregion
 
+const API_BASE_URL = 'https://user-api-server.onrender.com';
+// const API_BASE_URL = 'http://localhost:3000';
 
 // تهيئة محرر Quill
 var quill = new Quill('#editor-container', {
@@ -28,9 +31,11 @@ var quill = new Quill('#editor-container', {
 });
 
 
+//#region DOCUMENT READY
+//Document ready
 $(document).ready(function () {
 
-// Sidebar Toggle
+  // Sidebar Toggle
   $('#sidebarToggle').click(function () {
     $('#sidebar').toggleClass('closed');
     $('#page-content').toggleClass('expanded');
@@ -41,32 +46,30 @@ $(document).ready(function () {
     $('#page-content').addClass('expanded');
   });
 
-
   // إحضار معلومات المستخدم من الـ localStorage (أو الـ API)
   let adminFullName = localStorage.getItem('name');
   let adminEmail = localStorage.getItem('email');
   let adminRole = localStorage.getItem('role');
-  
 
   // إحضار معلومات المستخدم من الـ localStorage (أو الـ API)
   // let user = JSON.parse(localStorage.getItem('user'));
- // التحقق من وجود البيانات واستبدال الفراغات بـ "_"
-if (adminFullName) {
-  adminFullName = adminFullName.replace(/ /g, "_");
-} else {
-  adminFullName = "Admin";
-}
+  // التحقق من وجود البيانات واستبدال الفراغات بـ "_"
+  if (adminFullName) {
+    adminFullName = adminFullName.replace(/ /g, "_");
+  } else {
+    adminFullName = "Admin";
+  }
 
-if (!adminEmail) {
-  adminEmail = "؟؟";
-}
+  if (!adminEmail) {
+    adminEmail = "؟؟";
+  }
 
-if (!adminRole) {
-  adminRole = "؟؟";
-}
+  if (!adminRole) {
+    adminRole = "؟؟";
+  }
 
-// عرض البيانات في الـ Navbar
-$('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
+  // عرض البيانات في الـ Navbar
+  $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
 
 
   // تسجيل الخروج
@@ -93,11 +96,16 @@ $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
     loadArticles();
   });
 
+  $('#servicesLink').on('click', function () {
+    loadServices();
+  });
+
+
   // تحميل المستخدمين
   function loadUsers() {
     $('#content').html('<h3>Loading Users...</h3>');
     $.ajax({
-      url: 'http://localhost:3000/dashboard/getAllUsers',
+      url: `${API_BASE_URL}/dashboard/getAllUsers`,
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
       success: function (response) {
@@ -118,7 +126,7 @@ $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
   function loadPatients() {
     $('#content').html('<h3>Loading Patients...</h3>');
     $.ajax({
-      url: 'http://localhost:3000/dashboard/getAllPatients', // تأكد من أن هذا هو الرابط الصحيح للـ API
+      url: `${API_BASE_URL}/dashboard/getAllPatients`,
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }, // إرسال التوكن للتحقق
       success: function (response) {
@@ -178,32 +186,11 @@ $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
     });
   }
 
-  // تحميل المواعيد
-  // function loadAppointments() {
-  //   $('#content').html('<h3>Loading Appointments...</h3>');
-  //   $.ajax({
-  //     url: 'http://localhost:3000/dashboard/getAllAppointments',
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${token}` },
-  //     success: function (response) {
-  //       let appointmentsHTML = '<h3>Appointments</h3><table class="table table-striped"><thead><tr><th>ID</th><th>Date</th><th>Time</th><th>Patient Name</th></tr></thead><tbody>';
-  //       response.forEach(appointment => {
-  //         appointmentsHTML += `<tr><td>${appointment._id}</td><td>${appointment.date}</td><td>${appointment.time}</td><td>${appointment.patientName}</td></tr>`;
-  //       });
-  //       appointmentsHTML += '</tbody></table>';
-  //       $('#content').html(appointmentsHTML);
-  //     },
-  //     error: function () {
-  //       $('#content').html('<p class="text-danger">Failed to load appointments.</p>');
-  //     },
-  //   });
-  // }
-
   // تحميل المقالات
   function loadArticles() {
     $('#content').html('<h3>Loading Articles...</h3>');
     $.ajax({
-      url: 'http://localhost:3000/dashboard/getAllArticles',
+      url: `${API_BASE_URL}/dashboard/getAllArticles`,
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
       success: function (response) {
@@ -248,50 +235,50 @@ $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
     $('#content').html('<h3>Loading Calendar...</h3>');
 
     $.ajax({
-      url: 'http://localhost:3000/dashboard/getAllAppointments',
+      url: `${API_BASE_URL}/dashboard/getAllAppointments`,
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
       success: function (appointments) {
-          $('#content').html('<div id="calendar"></div>');
-  
-          console.log(appointments);
-          let events = appointments.map(appointment => ({
-              id: appointment._id,
-              title: getEventTitle(appointment),
-              start: `${appointment.date}T${appointment.time}`,
-              backgroundColor: getColor(appointment.status),
-              borderColor: getBorderColor(appointment.status),
-              extendedProps: { 
-                  status: appointment.status, 
-                  date: appointment.date, 
-                  patientName: appointment.patientName || "N/A", 
-                  time: appointment.time, 
-                  id: appointment._id
-              }
-          }));
-  
-          let calendarEl = document.getElementById('calendar');
-  
-          if (calendarEl) {
-              let calendar = new FullCalendar.Calendar(calendarEl, {
-                  initialView: 'dayGridMonth',
-                  headerToolbar: {
-                      left: 'prev,next today',
-                      center: 'title',
-                      right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                  },
-                  events: events,
-                  eventClick: function (info) {
-                      console.log("Appointment Details:", info.event.extendedProps);
-  
-                      let currentId = info.event.extendedProps.id;
-                      let currentDate = info.event.extendedProps.date;
-                      let currentPatientName = info.event.extendedProps.patientName;
-                      let currentTime = info.event.extendedProps.time;
-                      let currentStatus = info.event.extendedProps.status;
-  
-                      // عرض البيانات في popup
-                      let popupContent = `
+        $('#content').html('<div id="calendar"></div>');
+
+        console.log(appointments);
+        let events = appointments.map(appointment => ({
+          id: appointment._id,
+          title: getEventTitle(appointment),
+          start: `${appointment.date}T${appointment.time}`,
+          backgroundColor: getColor(appointment.status),
+          borderColor: getBorderColor(appointment.status),
+          extendedProps: {
+            status: appointment.status,
+            date: appointment.date,
+            patientName: appointment.patientName || "N/A",
+            time: appointment.time,
+            id: appointment._id
+          }
+        }));
+
+        let calendarEl = document.getElementById('calendar');
+
+        if (calendarEl) {
+          let calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: events,
+            eventClick: function (info) {
+              console.log("Appointment Details:", info.event.extendedProps);
+
+              let currentId = info.event.extendedProps.id;
+              let currentDate = info.event.extendedProps.date;
+              let currentPatientName = info.event.extendedProps.patientName;
+              let currentTime = info.event.extendedProps.time;
+              let currentStatus = info.event.extendedProps.status;
+
+              // عرض البيانات في popup
+              let popupContent = `
                           <div class="popup">
                               <h3>Appointment Details</h3>
                               <p><strong>ID:</strong> ${currentId}</p>
@@ -309,82 +296,160 @@ $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
                               <button id="closePopup">Close</button>
                           </div>
                       `;
-  
-                      // عرض النافذة
-                      $('body').append(`<div class="popup-container">${popupContent}</div>`);
-  
-                      // عند الضغط على زر الإغلاق
-                      $('#closePopup').click(function () {
-                          $('.popup-container').remove();
-                      });
-  
-                      // عند الضغط على زر التحديث
-                      $('#updateStatusBtn').click(function () {
-                          let newStatus = $('#newStatus').val();
-                          if (newStatus && ["available", "booked", "locked"].includes(newStatus)) {
-                              updateAppointmentStatus(currentId, newStatus, () => {
-                                  info.event.setProp('backgroundColor', getColor(newStatus));
-                                  info.event.setProp('borderColor', getBorderColor(newStatus));
-                                  info.event.setProp('title', getEventTitle({ _id: currentId, status: newStatus }));
-                                  info.event.setExtendedProp('status', newStatus);
-                                  $('.popup-container').remove(); // إغلاق النافذة بعد التحديث
-                              });
-                          }
-                      });
-                  }
+
+              // عرض النافذة
+              $('body').append(`<div class="popup-container">${popupContent}</div>`);
+
+              // عند الضغط على زر الإغلاق
+              $('#closePopup').click(function () {
+                $('.popup-container').remove();
               });
-  
-              calendar.render();
-          } else {
-              console.error("Calendar element not found!");
-          }
+
+              // عند الضغط على زر التحديث
+              $('#updateStatusBtn').click(function () {
+                let newStatus = $('#newStatus').val();
+                if (newStatus && ["available", "booked", "locked"].includes(newStatus)) {
+                  updateAppointmentStatus(currentId, newStatus, () => {
+                    info.event.setProp('backgroundColor', getColor(newStatus));
+                    info.event.setProp('borderColor', getBorderColor(newStatus));
+                    info.event.setProp('title', getEventTitle({ _id: currentId, status: newStatus }));
+                    info.event.setExtendedProp('status', newStatus);
+                    $('.popup-container').remove(); // إغلاق النافذة بعد التحديث
+                  });
+                }
+              });
+            }
+          });
+
+          calendar.render();
+        } else {
+          console.error("Calendar element not found!");
+        }
       },
       error: function () {
-          $('#content').html('<p class="text-danger">Failed to load calendar.</p>');
+        $('#content').html('<p class="text-danger">Failed to load calendar.</p>');
       }
-  });
-  
-}
-
-// 🔵 دالة لتحديث الحالة على السيرفر
-function updateAppointmentStatus(appointmentId, newStatus, callback) {
-    $.ajax({
-        url: `http://localhost:3000/dashboard/updateAppointment/${appointmentId}`,
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        data: JSON.stringify({ status: newStatus }),
-        success: function () {
-            alert("Appointment updated successfully!");
-            if (callback) callback();
-        },
-        error: function () {
-            alert("Failed to update appointment.");
-        }
     });
-}
 
-// 🟢 دالة لتحديد العنوان بناءً على الحالة
-function getEventTitle(appointment) {
+  }
+
+  // 🔵 دالة لتحديث الحالة على السيرفر
+  function updateAppointmentStatus(appointmentId, newStatus, callback) {
+    $.ajax({
+      url: `${API_BASE_URL}/dashboard/updateAppointment/${appointmentId}`,
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      data: JSON.stringify({ status: newStatus }),
+      success: function () {
+        alert("Appointment updated successfully!");
+        if (callback) callback();
+      },
+      error: function () {
+        alert("Failed to update appointment.");
+      }
+    });
+  }
+
+  // 🟢 دالة لتحديد العنوان بناءً على الحالة
+  function getEventTitle(appointment) {
     if (appointment.status === 'locked') {
-        return `Locked 🔒`;
+      return `Locked 🔒`;
     }
     return appointment.status === 'booked' ? `Booked: ${appointment._id}` : 'Available';
-}
+  }
 
-// 🎨 دالة لاختيار اللون حسب الحالة
-function getColor(status) {
+  // 🎨 دالة لاختيار اللون حسب الحالة
+  function getColor(status) {
     return status === 'booked' ? 'orange' : status === 'locked' ? 'lightgray' : 'green';
-}
+  }
 
-// 🎨 دالة لاختيار لون الإطار حسب الحالة
-function getBorderColor(status) {
+  // 🎨 دالة لاختيار لون الإطار حسب الحالة
+  function getBorderColor(status) {
     return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
-}
-});
+  }
 
+
+  function loadServices() {
+    $('#content').html('<h3>Loading Services...</h3>');
+    $.ajax({
+      url: `${API_BASE_URL}/dashboard/services`,
+
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+      success: function (response) {
+        let servicesHTML = '<h3>Services</h3><div class="row">';
+
+        response.forEach(service => {
+          const isChecked = service.status === 'Published' ? 'checked' : '';
+          const safeServiceData = JSON.stringify(service).replace(/"/g, '&quot;'); // ✅ تصحيح مشكلة تمرير الكائن داخل `onclick`
+
+          servicesHTML += `
+          <div class="col-lg-3 mb-4">
+            <div class="card">
+              <img src="${service.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${service.title.ar}">
+              <div class="card-body">
+                <h5 class="card-title">${service.title.ar}</h5>
+                <p class="card-text">${service.description.ar}</p>
+                
+                <button class="btn btn-primary btn-sm" onclick="viewCategories('${service.serviceId}')">Read More</button>
+                
+
+                <button class="btn btn-warning btn-sm" onclick="openEditPopup('service', '${service.serviceId}', ${safeServiceData})">Edit</button>
+
+                <button class="btn btn-danger btn-sm" onclick="deleteService('${service.serviceId}')">Delete</button>
+
+                <!-- Switch Toggle for Publish/Unpublish -->
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" role="switch" id="switch-${service.serviceId}"
+                    ${isChecked} onclick="toggleStatus('service', '${service.serviceId}', this.checked)">
+                  <label class="form-check-label" for="switch-${service.serviceId}">
+                    ${service.status}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        });
+
+        servicesHTML += '</div>';
+        $('#content').html(servicesHTML);
+      },
+      error: function () {
+        $('#content').html('<p class="text-danger">Failed to load services.</p>');
+      },
+    });
+  }
+
+  // عند اختيار خدمة، تحميل الفئات المرتبطة بها
+  $('#serviceSelect').change(function () {
+    let serviceId = $(this).val();
+    $('#categorySelect').empty().append('<option value="">اختر فئة...</option>');
+
+    if (serviceId) {
+      $.ajax({
+        url: `${API_BASE_URL}/dashboard/service/${serviceId}/categories`,
+        type: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` },
+        success: function (data) {
+          data.forEach(category => {
+            $('#categorySelect').append(`<option value="${category.categoryId}">${category.title.ar}</option>`);
+          });
+        },
+        error: function (err) {
+          console.error('Error fetching categories:', err);
+        }
+      });
+    }
+  });
+
+});
+//#endregion
+
+//#region ARTICLE METHODS
+//View selected articl in popup
 function viewArticle(articleId) {
   $.ajax({
-    url: `http://localhost:3000/dashboard/getArticle/${articleId}`,
+    url: `${API_BASE_URL}/dashboard/getArticle/${articleId}`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
     success: function (article) {
@@ -423,9 +488,10 @@ function viewArticle(articleId) {
   });
 }
 
+//Edit the article
 function editArticle(articleId) {
   $.ajax({
-    url: `http://localhost:3000/dashboard/getArticle/${articleId}`,
+    url: `${API_BASE_URL}/dashboard/getArticle/${articleId}`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
     success: function (article) {
@@ -471,7 +537,7 @@ $('#editArticleForm').on('submit', function (e) {
   };
 
   $.ajax({
-    url: `http://localhost:3000/dashboard/updateArticle/${articleId}`,
+    url: `${API_BASE_URL}/dashboard/updateArticle/${articleId}`,
     method: 'PUT',
     headers: { Authorization: `Bearer ${token}` },
     contentType: 'application/json',
@@ -487,11 +553,12 @@ $('#editArticleForm').on('submit', function (e) {
   });
 });
 
+//Update the article status
 function toggleStatus(articleId, isChecked) {
   const newStatus = isChecked ? 'Published' : 'Draft';
 
   $.ajax({
-    url: `http://localhost:3000/dashboard/updateArticleStatus/${articleId}`,
+    url: `${API_BASE_URL}/dashboard/updateArticleStatus/${articleId}`,
     method: 'PUT',
     headers: { Authorization: `Bearer ${token}` },
     contentType: 'application/json',
@@ -506,10 +573,11 @@ function toggleStatus(articleId, isChecked) {
   });
 }
 
+//Delete the article
 function deleteArticle(articleId) {
   if (confirm('Are you sure you want to delete this article?')) {
     $.ajax({
-      url: `http://localhost:3000/dashboard/deleteArticle/${articleId}`,
+      url: `${API_BASE_URL}/dashboard/deleteArticle/${articleId}`,
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
       success: function () {
@@ -522,7 +590,10 @@ function deleteArticle(articleId) {
     });
   }
 }
+//#endregion
 
+
+//#region SERVICE METHODS
 // إرسال البيانات إلى السيرفر عند إضافة المقال
 $('#addArticleForm').on('submit', function (e) {
   e.preventDefault();
@@ -543,7 +614,7 @@ $('#addArticleForm').on('submit', function (e) {
   };
 
   $.ajax({
-    url: 'http://localhost:3000/dashboard/addArticle',
+    url: `${API_BASE_URL}/dashboard/addArticle`,
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     contentType: 'application/json',
@@ -559,64 +630,301 @@ $('#addArticleForm').on('submit', function (e) {
   });
 });
 
+// إرسال النموذج عند الضغط على "إضافة خدمة"
+$('#addServiceForm').submit(function (event) {
+  event.preventDefault(); // منع إعادة تحميل الصفحة
 
-$('#addServiceLink').click(function() {
-  $('#addServiceContent').show();  // إظهار النموذج
-});
-
-// إرسال البيانات إلى الخادم عند الحفظ
-// $('#addServiceForm').submit(function(e) {
-//   e.preventDefault();
-
-//   const serviceData = {
-//     title: $('#serviceTitle').val(),
-//     slug: "test",//$('#serviceSlug').val(),
-//     subCategoryId: $('#serviceSubCategory').val(),
-//     content: JSON.parse($('#serviceContent').val()) // تأكد من تحويل المحتوى إلى JSON
-//   };
-
-//   $.ajax({
-//     url: 'http://localhost:3000/dashboard/addService',  // تأكد من تحديد الـ API الخاص بك
-//     method: 'POST',
-//     headers: { Authorization: `Bearer ${token}` },
-//     contentType: 'application/json',
-//     data: JSON.stringify(serviceData),
-//     success: function(response) {
-//       alert('تم إضافة الخدمة بنجاح');
-//       $('#addServiceContent').hide();  // إخفاء النموذج بعد الإضافة
-//     },
-//     error: function(error) {
-//       alert('حدث خطأ أثناء إضافة الخدمة');
-//     }
-//   });
-// });
-
-
-
-
-//اضافة الeditor
-$('#addServiceForm').submit(function (e) {
-  e.preventDefault();
-
-  var serviceData = {
-    title: $('#serviceTitle').val(),
-    slug: "test1",
-    subCategoryId: $('#serviceSubCategory').val(),
-    content: quill.root.innerHTML // جلب المحتوى كـ HTML
+  let formData = {
+    title: {
+      ar: $('#serviceTitleAr').val(),
+      en: $('#serviceTitleEn').val(),
+      es: $('#serviceTitleEs').val()
+    },
+    description: {
+      ar: $('#serviceDescAr').val(),
+      en: $('#serviceDescEn').val(),
+      es: $('#serviceDescEs').val()
+    },
+    imageUrl: $('#serviceImageUrl').val()
   };
 
   $.ajax({
-    url: 'http://localhost:3000/dashboard/addService',
+    url: `${API_BASE_URL}/dashboard/services`,
     type: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
     contentType: 'application/json',
-    data: JSON.stringify(serviceData),
-    success: function(response) {
-      alert('تمت إضافة الخدمة بنجاح');
-      location.reload();
+    headers: { 'Authorization': `Bearer ${token}` },
+    data: JSON.stringify(formData),
+    success: function (response) {
+      alert('تمت إضافة الخدمة بنجاح!');
+      location.reload(); // إعادة تحميل الصفحة بعد الإضافة
     },
-    error: function(xhr) {
-      alert('حدث خطأ: ' + xhr.responseText);
+    error: function (err) {
+      console.error('Error adding service:', err);
+      alert('حدث خطأ أثناء إضافة الخدمة!');
     }
   });
 });
+
+// جلب الفئات عند النقر على Read More للخدمة
+function viewCategories(serviceId) {
+  console.log("viewCategories serviceId", serviceId);
+  $('#content').html('<h3>Loading Categories...</h3>');
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/service/${serviceId}/categories`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (response) {
+      let categoriesHTML = `<h3>Categories</h3><div class="row">`;
+
+      response.forEach(category => {
+        console.log(category);
+        const isChecked = category.status === 'Published' ? 'checked' : '';
+        const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ تصحيح تمرير الكائن داخل `onclick`
+
+        categoriesHTML += `
+          <div class="col-lg-3 mb-4">
+            <div class="card">
+              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title.ar}">
+              <div class="card-body">
+                <h5 class="card-title">${category.title.ar}</h5>
+                <p class="card-text">${category.description.ar}</p>
+                
+                <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${serviceId}', '${category.categoryId}')">Read More</button>
+                
+                <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${serviceId}', ${safeCategoryData})">Edit</button>
+
+                <button class="btn btn-danger btn-sm" onclick="deleteCategory('${serviceId}', '${category.categoryId}')">Delete</button>
+
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" role="switch" id="switch-${category.categoryId}"
+                    ${isChecked} onclick="serviceToggleStatus('category', '${category.categoryId}', this.checked)">
+                  <label class="form-check-label" for="switch-${category.categoryId}">
+                    ${category.status}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      categoriesHTML += '</div>';
+      $('#content').html(categoriesHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load categories.</p>');
+    },
+  });
+}
+
+// تحويل النص إلى Base64 مع دعم UTF-8
+function encodeBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+// فك تشفير Base64 إلى نص مع دعم UTF-8
+function decodeBase64(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
+
+// جلب الفئات الفرعية عند النقر على Read More للفئة
+function viewSubcategories(serviceId, categoryId) {
+  console.log("serviceId", serviceId);
+  console.log("categoryId", categoryId);
+
+  $('#content').html('<h3>Loading Subcategories...</h3>');
+
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/service/${serviceId}/category/${categoryId}/subcategories`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (response) {
+      let subcategoriesHTML = `<h3>Subcategories</h3><div class="row">`;
+
+      response.forEach(subcategory => {
+        console.log("subcategory", subcategory);
+        const isChecked = subcategory.status === 'Published' ? 'checked' : '';
+
+        // ✅ تحويل بيانات الفئة الفرعية إلى Base64 باستخدام UTF-8
+        const encodedData = encodeBase64(JSON.stringify(subcategory));
+
+        subcategoriesHTML += `
+                <div class="col-lg-3 mb-4">
+                  <div class="card">
+                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title.ar}">
+                    <div class="card-body">
+                      <h5 class="card-title">${subcategory.title.ar}</h5>
+                      <p class="card-text">${subcategory.description.ar}</p>
+
+                      <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
+
+                      <button class="btn btn-warning btn-sm" onclick="openEditPopup('subcategory', '${categoryId}', '${encodedData}')">Edit</button>
+                      <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${serviceId}', '${categoryId}', '${subcategory.subcategoryId}')">Delete</button>
+
+                      <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" role="switch" id="switch-${subcategory.subcategoryId}"
+                          ${isChecked} onclick="serviceToggleStatus('subcategory', '${subcategory.subcategoryId}', this.checked)">
+                        <label class="form-check-label" for="switch-${subcategory.subcategoryId}">
+                          ${subcategory.status}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+      });
+
+      subcategoriesHTML += '</div>';
+      $('#content').html(subcategoriesHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load subcategories.</p>');
+    },
+  });
+}
+
+// عرض المحتوى عند النقر على "Read More"
+function showContent(encodedData) {
+  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ فك تشفير Base64 مع دعم UTF-8
+
+  let contentHTML = `
+    <h3>${subcategory.title.ar}</h3>
+    <label for="languageSelect"><strong>Select Language:</strong></label>
+    <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
+      <option value="ar" selected>العربية</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
+    <div id="contentDisplay" class="mt-3">
+      <p>${subcategory.content.ar}</p>
+    </div>`;
+
+  $('#content').html(contentHTML);
+}
+
+// تحديث المحتوى عند تغيير اللغة
+function updateContent(encodedData) {
+  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ فك تشفير Base64 مع دعم UTF-8
+  let selectedLang = $('#languageSelect').val();
+  $('#contentDisplay').html(`<p>${subcategory.content[selectedLang]}</p>`);
+}
+
+// تحديث حالة النشر
+function serviceToggleStatus(type, id, isChecked) {
+  const newStatus = isChecked ? 'Published' : 'Unpublished';
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/${type}/${id}/status`,
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    data: JSON.stringify({ status: newStatus }),
+    success: function () {
+      $(`#switch-${id}`).next().text(newStatus);
+    },
+    error: function () {
+      alert('Failed to update status.');
+    },
+  });
+}
+
+// حذف عنصر
+function deleteService(serviceId) {
+  if (confirm('Are you sure you want to delete this service?')) {
+    $.ajax({
+      url: `${API_BASE_URL}/dashboard/service/${serviceId}`,
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+      success: function () {
+        loadServices();
+      },
+      error: function () {
+        alert('Failed to delete service.');
+      },
+    });
+  }
+}
+
+function openEditPopup(type, parentId, item) {
+
+  $('#lblEditContentAr').hide();
+  $('#editContentAr').hide();
+
+  $('#lblEditContentEn').hide();
+  $('#editContentEn').hide();
+  console.log("service popup", type, parentId, item);
+  $('#editId').val(item._id || item.serviceId || item.categoryId || item.subcategoryId);
+  $('#editType').val(type);
+
+  $('#editTitleAr').val(item.title.ar);
+  $('#editTitleEn').val(item.title.en);
+  $('#editDescriptionAr').val(item.description.ar);
+  $('#editDescriptionEn').val(item.description.en);
+  $('#editImageUrl').val(item.imageUrl);
+
+  if (type == "subcategory") {
+    console.log("wwwwww", item);
+    $('#editContentAr').show();
+    $('#editContentEn').show();
+    $('#editContentAr').val(item.content.ar);
+    $('#editContentEn').val(item.content.en);
+  }
+
+  $('#editPopup').modal('show');
+
+  // تخزين parentId لاستخدامه في التحديث إذا كان التعديل على فئة أو فئة فرعية
+  $('#editPopup').data('parentId', parentId || null);
+}
+
+function saveChanges() {
+  const type = $('#editType').val();
+  const id = $('#editId').val();
+  const parentId = $('#editPopup').data('parentId');
+
+  const updatedData = {
+    title: { ar: $('#editTitleAr').val(), en: $('#editTitleEn').val() },
+    description: { ar: $('#editDescriptionAr').val(), en: $('#editDescriptionEn').val() },
+    imageUrl: $('#editImageUrl').val()
+  };
+  if (type == "subcategory") {
+    updatedData.content = { ar: $('#editContentAr').val(), en: $('#editContentEn').val() }
+
+  }
+
+  console.log("updatedData", updatedData);
+  let url = `${API_BASE_URL}/dashboard/${type}/${parentId}`;
+  console.log("url sevice", url);
+
+  console.log("type", type);
+  console.log("id", id);
+  // let url = `${API_BASE_URL}/dashboard/service/${parentId}/category/${id}`;
+
+  if (type === 'category') {
+    console.log("url category", url);
+    url = `${API_BASE_URL}/dashboard/service/${parentId}/category/${id}`;
+  } else if (type === 'subcategory') {
+    console.log("url subcategory", url);
+
+    url = `${API_BASE_URL}/dashboard/service/${parentId.split('-')[0]}/category/${parentId.split('-')[1]}/subcategory/${id}`;
+  }
+
+  $.ajax({
+    url: url,
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    data: JSON.stringify(updatedData),
+    success: function () {
+      $('#editPopup').modal('hide');
+      alert('Updated successfully!');
+
+      // إعادة تحميل البيانات بناءً على ما تم تعديله
+      if (type === 'service') {
+        loadServices();
+      } else if (type === 'category') {
+        viewCategories(parentId);
+      } else if (type === 'subcategory') {
+        viewSubcategories(parentId.split('-')[0], parentId.split('-')[1]);
+      }
+    },
+    error: function () {
+      alert('Failed to update.');
+    }
+  });
+}
+//#endregion

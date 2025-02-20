@@ -1,3 +1,8 @@
+
+const API_BASE_URL = 'https://user-api-server.onrender.com';
+// const API_BASE_URL = 'http://localhost:3000';
+
+
 $(document).ready(function () {
     $('#loginForm').on('submit', function (event) {
       event.preventDefault(); // منع التحديث الافتراضي للصفحة
@@ -13,7 +18,7 @@ $(document).ready(function () {
   
       // إرسال البيانات إلى API
       $.ajax({
-        url: 'http://localhost:3000/adminLogin', // رابط API تسجيل الدخول
+        url: `${API_BASE_URL}/adminLogin`,
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
