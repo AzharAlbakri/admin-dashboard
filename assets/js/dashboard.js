@@ -11,8 +11,8 @@ $('#addArticleBtn').click(function () {
 });
 //#endregion
 
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-// const API_BASE_URL = 'http://localhost:3000';
+//const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 // تهيئة محرر Quill
 var quill = new Quill('#editor-container', {
@@ -55,7 +55,7 @@ $(document).ready(function () {
   // let user = JSON.parse(localStorage.getItem('user'));
   // التحقق من وجود البيانات واستبدال الفراغات بـ "_"
   if (adminFullName) {
-    adminFullName = adminFullName.replace(/ /g, "_");
+    adminFullName = adminFullName.replace(/ /g, " ");
   } else {
     adminFullName = "Admin";
   }
