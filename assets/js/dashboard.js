@@ -1,3 +1,7 @@
+
+const API_BASE_URL = 'https://user-api-server.onrender.com';
+//const API_BASE_URL = 'http://localhost:3000';
+
 //#region TOKEN
 // Check the token
 const token = localStorage.getItem('token');
@@ -11,8 +15,6 @@ $('#addArticleBtn').click(function () {
 });
 //#endregion
 
-//const API_BASE_URL = 'https://user-api-server.onrender.com';
-const API_BASE_URL = 'http://localhost:3000';
 
 // تهيئة محرر Quill
 var quill = new Quill('#editor-container', {
