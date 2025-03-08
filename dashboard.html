@@ -11,12 +11,12 @@
 
 
 
-    <!-- مكتبة Quill -->
+    <!-- Library  Quill -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 
-    <!-- jQuery أولًا -->
+    <!-- jQuery  -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <!-- FullCalendar CSS -->
@@ -79,12 +79,10 @@
                 </li>
 
             </ul>
-            <button class="btn btn-success w-100 my-3" id="addArticleBtn"><i class="fas fa-plus"></i> إضافة مقال
-                جديد</button>
-            <!-- <button class="btn btn-success w-100 my-3" id="addServiceLink"><i class="fas fa-plus"></i> إضافة خدمة جديدة</button> -->
-            <!-- <button class="btn btn-success w-100 my-3" id="addServiceBtn"><i class="fas fa-plus"></i> إضافة خدمة جديدة</button> -->
+            <button class="btn btn-success w-100 my-3" id="addArticleBtn"><i class="fas fa-plus"></i> Add new
+                article</button>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
-                إضافة خدمة جديدة
+                Add New Service
             </button>
         </div>
 
@@ -98,80 +96,6 @@
         </div>
     </div>
 
-
-    <!-- محرر إضافة الخدمة -->
-    <!-- <div id="addServiceContent" style="display:none;">
-        <h3>إضافة خدمة جديدة</h3>
-        <form id="addServiceForm">
-            <div class="mb-3">
-                <label for="title" class="form-label">العنوان</label>
-                <input type="text" class="form-control" id="serviceTitle" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="slug" class="form-label">الرابط</label>
-                <input type="text" class="form-control" id="serviceSlug" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="subCategoryId" class="form-label">الفئة</label>
-                <select id="serviceSubCategory" class="form-select">
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="content" class="form-label">المحتوى</label>
-                <div id="editor-container" style="height: 300px;"></div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">حفظ الخدمة</button>
-        </form>
-    </div> -->
-
-
-
-    <!-- <form id="serviceForm">
-        <section class="mb-4 p-3 border rounded">
-            <h5>إضافة خدمة</h5>
-            <div class="mb-3">
-                <label for="existingService" class="form-label">اختر خدمة موجودة</label>
-                <select id="existingService" class="form-select">
-                    <option value="">-- اختر خدمة --</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="serviceTitle" class="form-label">عنوان الخدمة</label>
-                <input type="text" id="serviceTitle" class="form-control" placeholder="أدخل عنوان الخدمة">
-            </div>
-        </section>
-
-        <section class="mb-4 p-3 border rounded">
-            <h5>إضافة فئة</h5>
-            <div class="mb-3">
-                <label for="existingCategory" class="form-label">اختر فئة موجودة</label>
-                <select id="existingCategory" class="form-select">
-                    <option value="">-- اختر فئة --</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="categoryTitle" class="form-label">عنوان الفئة</label>
-                <input type="text" id="categoryTitle" class="form-control" placeholder="أدخل عنوان الفئة">
-            </div>
-        </section>
-
-        <section class="mb-4 p-3 border rounded">
-            <h5>إضافة خدمة فرعية</h5>
-            <div class="mb-3">
-                <label for="subServiceTitle" class="form-label">عنوان الخدمة الفرعية</label>
-                <input type="text" id="subServiceTitle" class="form-control" placeholder="أدخل عنوان الخدمة الفرعية">
-            </div>
-            <button type="submit" class="btn btn-success">حفظ الخدمة</button>
-        </section>
-    </form> -->
-
-
-
-    <!-- Popup لعرض المقال -->
     <div class="modal fade" id="viewArticlePopup" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -180,15 +104,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="articleDetails">
-                    <!-- محتوى المقال سيتم تحميله هنا -->
+                    <!-- Article content will be loaded here -->
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- Popup لتعديل المقال -->
     <div id="editArticlePopup" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -278,89 +199,91 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addArticlePopupLabel">إضافة مقال جديد</h5>
+                    <h5 class="modal-title" id="addArticlePopupLabel">Add New Article</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addArticleForm">
                         <div class="mb-3">
-                            <label for="title" class="form-label">العنوان</label>
+                            <label for="title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="addtitle" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="content" class="form-label">المحتوى</label>
+                            <label for="content" class="form-label">Content</label>
                             <textarea class="form-control" id="addcontent" rows="5" required></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="summary" class="form-label">الملخص</label>
+                            <label for="summary" class="form-label">Summary</label>
                             <textarea class="form-control" id="addsummary" rows="3" required></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="category" class="form-label">الفئة</label>
+                            <label for="category" class="form-label">Category</label>
                             <input type="text" class="form-control" id="addcategory" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="author" class="form-label">المؤلف</label>
+                            <label for="author" class="form-label">Author</label>
                             <input type="text" class="form-control" id="addauthor" required>
                         </div>
 
-                        <!-- صور المقال -->
+                        <!-- Article Images -->
                         <div class="mb-3">
-                            <label for="images" class="form-label">الصور (روابط URL مفصولة بفاصلة)</label>
+                            <label for="images" class="form-label">Images (URLs separated by commas)</label>
                             <input type="text" class="form-control" id="addimages"
-                                placeholder="مثال: image1.jpg, image2.jpg">
+                                placeholder="Example: image1.jpg, image2.jpg">
                         </div>
 
-                        <!-- فيديوهات المقال -->
+                        <!-- Article Videos -->
                         <div class="mb-3">
-                            <label for="videos" class="form-label">الفيديوهات (روابط URL مفصولة بفاصلة)</label>
+                            <label for="videos" class="form-label">Videos (URLs separated by commas)</label>
                             <input type="text" class="form-control" id="addvideos"
-                                placeholder="مثال: video1.mp4, video2.mp4">
+                                placeholder="Example: video1.mp4, video2.mp4">
                         </div>
 
-                        <!-- الكلمات المفتاحية -->
+                        <!-- Keywords -->
                         <div class="mb-3">
-                            <label for="keywords" class="form-label">الكلمات المفتاحية (مفصولة بفاصلة)</label>
-                            <input type="text" class="form-control" id="addkeywords" placeholder="مثال: مفتاح1, مفتاح2">
+                            <label for="keywords" class="form-label">Keywords (separated by commas)</label>
+                            <input type="text" class="form-control" id="addkeywords"
+                                placeholder="Example: keyword1, keyword2">
                         </div>
 
-                        <!-- المصادر -->
+                        <!-- Sources -->
                         <div class="mb-3">
-                            <label for="sources" class="form-label">المصادر (روابط أو نصوص مفصولة بفاصلة)</label>
-                            <input type="text" class="form-control" id="addsources" placeholder="مثال: مصدر1, مصدر2">
+                            <label for="sources" class="form-label">Sources (URLs or texts separated by commas)</label>
+                            <input type="text" class="form-control" id="addsources"
+                                placeholder="Example: source1, source2">
                         </div>
 
-                        <!-- الوسوم (Tags) -->
+                        <!-- Tags -->
                         <div class="mb-3">
-                            <label for="tags" class="form-label">الوسوم (مفصولة بفاصلة)</label>
-                            <input type="text" class="form-control" id="addtags" placeholder="مثال: وسم1, وسم2">
+                            <label for="tags" class="form-label">Tags (separated by commas)</label>
+                            <input type="text" class="form-control" id="addtags" placeholder="Example: tag1, tag2">
                         </div>
 
-                        <!-- تفعيل التعليقات -->
+                        <!-- Enable Comments -->
                         <div class="mb-3">
-                            <label class="form-label">تمكين التعليقات</label>
+                            <label class="form-label">Enable Comments</label>
                             <select class="form-control" id="addcomments_enabled">
-                                <option value="true">نعم</option>
-                                <option value="false" selected>لا</option>
+                                <option value="true">Yes</option>
+                                <option value="false" selected>No</option>
                             </select>
                         </div>
 
-                        <!-- حالة المقال -->
+                        <!-- Article Status -->
                         <div class="mb-3">
-                            <label class="form-label">حالة المقال</label>
+                            <label class="form-label">Article Status</label>
                             <select class="form-control" id="addstatus">
-                                <option value="Published">منشور</option>
-                                <option value="Draft" selected>مسودة</option>
+                                <option value="Published">Published</option>
+                                <option value="Draft" selected>Draft</option>
                             </select>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                            <button type="submit" class="btn btn-primary">إضافة المقال</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Article</button>
                         </div>
                     </form>
                 </div>
@@ -368,90 +291,88 @@
         </div>
     </div>
 
-
-    <!--  المودال لاضافة خدمة جديدة -->
+    <!-- Modal for Adding a New Service -->
     <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addServiceModalLabel">إضافة خدمة جديدة</h5>
+                    <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addServiceForm">
-                        <!-- اختيار أو إضافة خدمة -->
+                        <!-- Select or Add a Service -->
                         <div class="mb-3">
-                            <label for="serviceSelect" class="form-label">اختيار خدمة موجودة</label>
+                            <label for="serviceSelect" class="form-label">Select an Existing Service</label>
                             <select id="serviceSelect" class="form-select">
-                                <option value="">اختر خدمة...</option>
-                                <!-- سيتم تحميل الخدمات من قاعدة البيانات -->
+                                <option value="">Choose a service...</option>
+                                <!-- Services will be loaded from the database -->
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">إضافة خدمة جديدة</label>
-                            <input type="text" id="serviceTitleAr" class="form-control" placeholder="العنوان بالعربية">
+                            <label class="form-label">Add a New Service</label>
+                            <input type="text" id="serviceTitleAr" class="form-control" placeholder="Title in Arabic">
                             <input type="text" id="serviceTitleEn" class="form-control mt-2"
-                                placeholder="العنوان بالإنجليزية">
+                                placeholder="Title in English">
                             <input type="text" id="serviceTitleEs" class="form-control mt-2"
-                                placeholder="العنوان بالإسبانية">
+                                placeholder="Title in Spanish">
                             <input type="url" id="serviceImage" class="form-control mt-2"
-                                placeholder="رابط صورة الخدمة">
+                                placeholder="Service Image URL">
                         </div>
 
-                        <!-- اختيار أو إضافة فئة -->
+                        <!-- Select or Add a Category -->
                         <div class="mb-3">
-                            <label for="categorySelect" class="form-label">اختيار فئة موجودة</label>
+                            <label for="categorySelect" class="form-label">Select an Existing Category</label>
                             <select id="categorySelect" class="form-select">
-                                <option value="">اختر فئة...</option>
-                                <!-- سيتم تحميل الفئات من الخدمة المختارة -->
+                                <option value="">Choose a category...</option>
+                                <!-- Categories will be loaded based on the selected service -->
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">إضافة فئة جديدة</label>
-                            <input type="text" id="categoryTitleAr" class="form-control" placeholder="العنوان بالعربية">
+                            <label class="form-label">Add a New Category</label>
+                            <input type="text" id="categoryTitleAr" class="form-control" placeholder="Title in Arabic">
                             <input type="text" id="categoryTitleEn" class="form-control mt-2"
-                                placeholder="العنوان بالإنجليزية">
+                                placeholder="Title in English">
                             <input type="text" id="categoryTitleEs" class="form-control mt-2"
-                                placeholder="العنوان بالإسبانية">
+                                placeholder="Title in Spanish">
                             <input type="url" id="categoryImage" class="form-control mt-2"
-                                placeholder="رابط صورة الفئة">
+                                placeholder="Category Image URL">
                         </div>
 
-                        <!-- اختيار أو إضافة فئة فرعية -->
+                        <!-- Select or Add a Subcategory -->
                         <div class="mb-3">
-                            <label class="form-label">إضافة فئة فرعية</label>
+                            <label class="form-label">Add a Subcategory</label>
                             <input type="text" id="subCategoryTitleAr" class="form-control"
-                                placeholder="العنوان بالعربية">
+                                placeholder="Title in Arabic">
                             <input type="text" id="subCategoryTitleEn" class="form-control mt-2"
-                                placeholder="العنوان بالإنجليزية">
+                                placeholder="Title in English">
                             <input type="text" id="subCategoryTitleEs" class="form-control mt-2"
-                                placeholder="العنوان بالإسبانية">
+                                placeholder="Title in Spanish">
                             <input type="url" id="subCategoryImage" class="form-control mt-2"
-                                placeholder="رابط صورة الفئة الفرعية">
+                                placeholder="Subcategory Image URL">
                         </div>
 
-                        <!-- محتوى الفئة الفرعية -->
+                        <!-- Subcategory Content -->
                         <div class="mb-3">
-                            <label class="form-label">محتوى الفئة الفرعية</label>
+                            <label class="form-label">Subcategory Content</label>
                             <textarea id="subCategoryContentAr" class="form-control"
-                                placeholder="المحتوى بالعربية"></textarea>
+                                placeholder="Content in Arabic"></textarea>
                             <textarea id="subCategoryContentEn" class="form-control mt-2"
-                                placeholder="المحتوى بالإنجليزية"></textarea>
+                                placeholder="Content in English"></textarea>
                             <textarea id="subCategoryContentEs" class="form-control mt-2"
-                                placeholder="المحتوى بالإسبانية"></textarea>
+                                placeholder="Content in Spanish"></textarea>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                            <button type="submit" class="btn btn-success">حفظ</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Save</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
 
 
     <div id="editPopup" class="modal fade" tabindex="-1">
@@ -467,37 +388,37 @@
                         <input type="hidden" id="editType">
 
                         <div class="mb-3">
-                            <label for="editTitleAr" class="form-label">العنوان (عربي)</label>
+                            <label for="editTitleAr" class="form-label">Title (Arabic)</label>
                             <input type="text" id="editTitleAr" class="form-control">
                         </div>
 
                         <div class="mb-3">
-                            <label for="editTitleEn" class="form-label">العنوان (إنجليزي)</label>
+                            <label for="editTitleEn" class="form-label">Title (English)</label>
                             <input type="text" id="editTitleEn" class="form-control">
                         </div>
 
                         <div class="mb-3">
-                            <label for="editDescriptionAr" class="form-label">الوصف (عربي)</label>
+                            <label for="editDescriptionAr" class="form-label">Description (Arabic)</label>
                             <textarea id="editDescriptionAr" class="form-control"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="editDescriptionEn" class="form-label">الوصف (إنجليزي)</label>
+                            <label for="editDescriptionEn" class="form-label">Description (English)</label>
                             <textarea id="editDescriptionEn" class="form-control"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="editImageUrl" class="form-label">رابط الصورة</label>
+                            <label for="editImageUrl" class="form-label">Image URL</label>
                             <input type="text" id="editImageUrl" class="form-control">
                         </div>
 
                         <div class="mb-3">
-                            <label for="lblEditContentAr" class="form-label">المحتوى (عربي)</label>
+                            <label for="editContentAr" class="form-label">Content (Arabic)</label>
                             <textarea id="editContentAr" class="form-control"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label id="lblEditContentEn" for="editContentEn" class="form-label">المحتوى (إنجليزي)</label>
+                            <label for="editContentEn" class="form-label">Content (English)</label>
                             <textarea id="editContentEn" class="form-control"></textarea>
                         </div>
 
@@ -508,79 +429,9 @@
         </div>
     </div>
 
-    <!-- <script>
-        // JavaScript - التعامل مع الإدخال
-        const form = document.getElementById('serviceForm');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const serviceId = document.getElementById('existingService').value || `service-${Date.now()}`;
-            const categoryId = document.getElementById('existingCategory').value || `category-${Date.now()}`;
-            const subcategoryId = `subcategory-${Date.now()}`;
-
-            const serviceData = {
-                serviceId,
-                title: {
-                    ar: document.getElementById('serviceTitleAr').value,
-                    en: document.getElementById('serviceTitleEn').value,
-                    es: document.getElementById('serviceTitleEs').value
-                },
-                description: {
-                    ar: document.getElementById('serviceDescriptionAr').value,
-                    en: document.getElementById('serviceDescriptionEn').value,
-                    es: document.getElementById('serviceDescriptionEs').value
-                },
-                imageUrl: document.getElementById('serviceImageUrl').value,
-                categories: [{
-                    categoryId,
-                    title: {
-                        ar: document.getElementById('categoryTitleAr').value,
-                        en: document.getElementById('categoryTitleEn').value,
-                        es: document.getElementById('categoryTitleEs').value
-                    },
-                    description: {
-                        ar: document.getElementById('categoryDescriptionAr').value,
-                        en: document.getElementById('categoryDescriptionEn').value,
-                        es: document.getElementById('categoryDescriptionEs').value
-                    },
-                    imageUrl: document.getElementById('categoryImageUrl').value,
-                    subcategories: [{
-                        subcategoryId,
-                        title: {
-                            ar: document.getElementById('subCategoryTitleAr').value,
-                            en: document.getElementById('subCategoryTitleEn').value,
-                            es: document.getElementById('subCategoryTitleEs').value
-                        },
-                        description: {
-                            ar: document.getElementById('subCategoryDescriptionAr').value,
-                            en: document.getElementById('subCategoryDescriptionEn').value,
-                            es: document.getElementById('subCategoryDescriptionEs').value
-                        },
-                        imageUrl: document.getElementById('subCategoryImageUrl').value,
-                        content: {
-                            ar: document.getElementById('subCategoryContentAr').value,
-                            en: document.getElementById('subCategoryContentEn').value,
-                            es: document.getElementById('subCategoryContentEs').value
-                        }
-                    }]
-                }]
-            };
-
-            const response = await fetch('/api/services', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(serviceData)
-            });
-
-            const result = await response.json();
-            alert(result.message || 'تمت إضافة الخدمة بنجاح!');
-            form.reset();
-        });
-    </script> -->
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- تحميل dashboard.js بعد جميع المكتبات -->
+    <!-- Load dashboard.js after all libraries -->
     <script src="assets/js/dashboard.js"></script>
 </body>
 

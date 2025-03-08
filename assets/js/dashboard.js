@@ -9,16 +9,15 @@ if (!token) {
   alert('Unauthorized! Please login first.');
   window.location.href = 'index.html';
 }
-// فتح النموذج عند الضغط على زر "إضافة مقال جديد"
 $('#addArticleBtn').click(function () {
   $('#addArticlePopup').modal('show');
 });
 //#endregion
 
 
-// تهيئة محرر Quill
+// Initialize Quill Editor
 var quill = new Quill('#editor-container', {
-  theme: 'snow', // مظهر المحرر
+  theme: 'snow', // Editor theme
   modules: {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -27,7 +26,7 @@ var quill = new Quill('#editor-container', {
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['image', 'link', 'blockquote', 'code-block'],
       [{ align: [] }],
-      ['clean'] // إزالة التنسيق
+      ['clean'] // Remove formatting
     ]
   }
 });
@@ -48,14 +47,14 @@ $(document).ready(function () {
     $('#page-content').addClass('expanded');
   });
 
-  // إحضار معلومات المستخدم من الـ localStorage (أو الـ API)
+  // Fetch user information from localStorage (or the API)
   let adminFullName = localStorage.getItem('name');
   let adminEmail = localStorage.getItem('email');
   let adminRole = localStorage.getItem('role');
 
-  // إحضار معلومات المستخدم من الـ localStorage (أو الـ API)
+  // Fetch user information from localStorage (or the API)
   // let user = JSON.parse(localStorage.getItem('user'));
-  // التحقق من وجود البيانات واستبدال الفراغات بـ "_"
+  // Check if data exists and replace spaces with "_"
   if (adminFullName) {
     adminFullName = adminFullName.replace(/ /g, " ");
   } else {
@@ -63,24 +62,23 @@ $(document).ready(function () {
   }
 
   if (!adminEmail) {
-    adminEmail = "؟؟";
+    adminEmail = "??";
   }
 
   if (!adminRole) {
-    adminRole = "؟؟";
+    adminRole = "??";
   }
 
-  // عرض البيانات في الـ Navbar
+  // Display data in the Navbar
   $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
 
+// Logout
+$('#logoutLink').on('click', function () {
+  localStorage.removeItem('token'); // Remove token
+  window.location.href = 'index.html'; // Redirect to login page
+});
 
-  // تسجيل الخروج
-  $('#logoutLink').on('click', function () {
-    localStorage.removeItem('token'); // حذف التوكن
-    window.location.href = 'index.html'; // إعادة التوجيه لصفحة تسجيل الدخول
-  });
-
-  // التعامل مع الروابط في الـ Sidebar
+// Handle Sidebar links
   $('#usersLink').on('click', function () {
     loadUsers();
   });
@@ -124,13 +122,13 @@ $(document).ready(function () {
     });
   }
 
-  // تحميل المرضى
+// Load patients
   function loadPatients() {
     $('#content').html('<h3>Loading Patients...</h3>');
     $.ajax({
       url: `${API_BASE_URL}/dashboard/getAllPatients`,
       method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }, // إرسال التوكن للتحقق
+      headers: { Authorization: `Bearer ${token}` }, // Send token for verification
       success: function (response) {
         let patientsHTML = `
           <h3>Patients</h3>
@@ -188,7 +186,7 @@ $(document).ready(function () {
     });
   }
 
-  // تحميل المقالات
+// Load articles
   function loadArticles() {
     $('#content').html('<h3>Loading Articles...</h3>');
     $.ajax({
@@ -279,7 +277,6 @@ $(document).ready(function () {
               let currentTime = info.event.extendedProps.time;
               let currentStatus = info.event.extendedProps.status;
 
-              // عرض البيانات في popup
               let popupContent = `
                           <div class="popup">
                               <h3>Appointment Details</h3>
@@ -299,15 +296,12 @@ $(document).ready(function () {
                           </div>
                       `;
 
-              // عرض النافذة
               $('body').append(`<div class="popup-container">${popupContent}</div>`);
 
-              // عند الضغط على زر الإغلاق
               $('#closePopup').click(function () {
                 $('.popup-container').remove();
               });
 
-              // عند الضغط على زر التحديث
               $('#updateStatusBtn').click(function () {
                 let newStatus = $('#newStatus').val();
                 if (newStatus && ["available", "booked", "locked"].includes(newStatus)) {
@@ -316,7 +310,7 @@ $(document).ready(function () {
                     info.event.setProp('borderColor', getBorderColor(newStatus));
                     info.event.setProp('title', getEventTitle({ _id: currentId, status: newStatus }));
                     info.event.setExtendedProp('status', newStatus);
-                    $('.popup-container').remove(); // إغلاق النافذة بعد التحديث
+                    $('.popup-container').remove();
                   });
                 }
               });
@@ -335,7 +329,7 @@ $(document).ready(function () {
 
   }
 
-  // 🔵 دالة لتحديث الحالة على السيرفر
+// Function to update status on the server
   function updateAppointmentStatus(appointmentId, newStatus, callback) {
     $.ajax({
       url: `${API_BASE_URL}/dashboard/updateAppointment/${appointmentId}`,
@@ -352,7 +346,7 @@ $(document).ready(function () {
     });
   }
 
-  // 🟢 دالة لتحديد العنوان بناءً على الحالة
+// Function to determine the title based on the status
   function getEventTitle(appointment) {
     if (appointment.status === 'locked') {
       return `Locked 🔒`;
@@ -360,12 +354,12 @@ $(document).ready(function () {
     return appointment.status === 'booked' ? `Booked: ${appointment._id}` : 'Available';
   }
 
-  // 🎨 دالة لاختيار اللون حسب الحالة
+// Function to choose the color based on the status
   function getColor(status) {
     return status === 'booked' ? 'orange' : status === 'locked' ? 'lightgray' : 'green';
   }
 
-  // 🎨 دالة لاختيار لون الإطار حسب الحالة
+// Function to choose the border color based on the status
   function getBorderColor(status) {
     return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
   }
@@ -383,7 +377,7 @@ $(document).ready(function () {
 
         response.forEach(service => {
           const isChecked = service.status === 'Published' ? 'checked' : '';
-          const safeServiceData = JSON.stringify(service).replace(/"/g, '&quot;'); // ✅ تصحيح مشكلة تمرير الكائن داخل `onclick`
+          const safeServiceData = JSON.stringify(service).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
 
           servicesHTML += `
           <div class="col-lg-3 mb-4">
@@ -422,7 +416,7 @@ $(document).ready(function () {
     });
   }
 
-  // عند اختيار خدمة، تحميل الفئات المرتبطة بها
+  // When a service is selected, load the associated categories
   $('#serviceSelect').change(function () {
     let serviceId = $(this).val();
     $('#categorySelect').empty().append('<option value="">اختر فئة...</option>');
@@ -566,7 +560,7 @@ function toggleStatus(articleId, isChecked) {
     contentType: 'application/json',
     data: JSON.stringify({ status: newStatus }),
     success: function () {
-      // تحديث تسمية الحالة بجانب الـ Switch مباشرة دون إعادة تحميل الصفحة
+      // Update the status label next to the switch directly without reloading the page
       $(`#switch-${articleId}`).next('label').text(newStatus);
     },
     error: function () {
@@ -596,7 +590,7 @@ function deleteArticle(articleId) {
 
 
 //#region SERVICE METHODS
-// إرسال البيانات إلى السيرفر عند إضافة المقال
+// Send data to the server when adding an article
 $('#addArticleForm').on('submit', function (e) {
   e.preventDefault();
 
@@ -606,7 +600,7 @@ $('#addArticleForm').on('submit', function (e) {
     summary: $('#addsummary').val(),
     category: $('#addcategory').val(),
     author: $('#addauthor').val(),
-    images: $('#addimages').val().split(',').map(img => img.trim()), // تقسيم النص إلى مصفوفة
+    images: $('#addimages').val().split(',').map(img => img.trim()), // Split the text into an array
     videos: $('#addvideos').val().split(',').map(vid => vid.trim()),
     keywords: $('#addkeywords').val().split(',').map(kw => kw.trim()),
     sources: $('#addsources').val().split(',').map(src => src.trim()),
@@ -624,17 +618,17 @@ $('#addArticleForm').on('submit', function (e) {
     success: function (response) {
       alert('تم إضافة المقال بنجاح!');
       $('#addArticlePopup').modal('hide');
-      loadArticles(); // إعادة تحميل المقالات لعرض المقال الجديد
+      loadArticles(); // Reload articles to display the new article
     },
     error: function () {
-      alert('فشل إضافة المقال.');
+      alert('Failed to add the article.');
     }
   });
 });
 
-// إرسال النموذج عند الضغط على "إضافة خدمة"
+// Send data to the server when adding a service
 $('#addServiceForm').submit(function (event) {
-  event.preventDefault(); // منع إعادة تحميل الصفحة
+  event.preventDefault(); // Prevent page reload
 
   let formData = {
     title: {
@@ -658,7 +652,7 @@ $('#addServiceForm').submit(function (event) {
     data: JSON.stringify(formData),
     success: function (response) {
       alert('تمت إضافة الخدمة بنجاح!');
-      location.reload(); // إعادة تحميل الصفحة بعد الإضافة
+      location.reload(); // Reload the page after adding
     },
     error: function (err) {
       console.error('Error adding service:', err);
@@ -667,7 +661,7 @@ $('#addServiceForm').submit(function (event) {
   });
 });
 
-// جلب الفئات عند النقر على Read More للخدمة
+// Fetch categories when clicking on "Read More" for the service
 function viewCategories(serviceId) {
   console.log("viewCategories serviceId", serviceId);
   $('#content').html('<h3>Loading Categories...</h3>');
@@ -681,7 +675,7 @@ function viewCategories(serviceId) {
       response.forEach(category => {
         console.log(category);
         const isChecked = category.status === 'Published' ? 'checked' : '';
-        const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ تصحيح تمرير الكائن داخل `onclick`
+        const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
 
         categoriesHTML += `
           <div class="col-lg-3 mb-4">
@@ -718,17 +712,17 @@ function viewCategories(serviceId) {
   });
 }
 
-// تحويل النص إلى Base64 مع دعم UTF-8
+// Convert text to Base64 with UTF-8 support
 function encodeBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
 
-// فك تشفير Base64 إلى نص مع دعم UTF-8
+// Decode Base64 to text with UTF-8 support
 function decodeBase64(str) {
   return decodeURIComponent(escape(atob(str)));
 }
 
-// جلب الفئات الفرعية عند النقر على Read More للفئة
+// Fetch subcategories when clicking on "Read More" for the category
 function viewSubcategories(serviceId, categoryId) {
   console.log("serviceId", serviceId);
   console.log("categoryId", categoryId);
@@ -746,7 +740,7 @@ function viewSubcategories(serviceId, categoryId) {
         console.log("subcategory", subcategory);
         const isChecked = subcategory.status === 'Published' ? 'checked' : '';
 
-        // ✅ تحويل بيانات الفئة الفرعية إلى Base64 باستخدام UTF-8
+// ✅ Convert subcategory data to Base64 using UTF-8
         const encodedData = encodeBase64(JSON.stringify(subcategory));
 
         subcategoriesHTML += `
@@ -783,9 +777,9 @@ function viewSubcategories(serviceId, categoryId) {
   });
 }
 
-// عرض المحتوى عند النقر على "Read More"
+// Display content when clicking on "Read More"
 function showContent(encodedData) {
-  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ فك تشفير Base64 مع دعم UTF-8
+  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
 
   let contentHTML = `
     <h3>${subcategory.title.ar}</h3>
@@ -802,14 +796,14 @@ function showContent(encodedData) {
   $('#content').html(contentHTML);
 }
 
-// تحديث المحتوى عند تغيير اللغة
+// Update the content when changing the language
 function updateContent(encodedData) {
-  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ فك تشفير Base64 مع دعم UTF-8
+  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
   let selectedLang = $('#languageSelect').val();
   $('#contentDisplay').html(`<p>${subcategory.content[selectedLang]}</p>`);
 }
 
-// تحديث حالة النشر
+// Update the publication status
 function serviceToggleStatus(type, id, isChecked) {
   const newStatus = isChecked ? 'Published' : 'Unpublished';
   $.ajax({
@@ -826,7 +820,7 @@ function serviceToggleStatus(type, id, isChecked) {
   });
 }
 
-// حذف عنصر
+// Delete item
 function deleteService(serviceId) {
   if (confirm('Are you sure you want to delete this service?')) {
     $.ajax({
@@ -870,7 +864,7 @@ function openEditPopup(type, parentId, item) {
 
   $('#editPopup').modal('show');
 
-  // تخزين parentId لاستخدامه في التحديث إذا كان التعديل على فئة أو فئة فرعية
+// Store parentId to use it in the update if the edit is on a category or subcategory
   $('#editPopup').data('parentId', parentId || null);
 }
 
@@ -915,7 +909,7 @@ function saveChanges() {
       $('#editPopup').modal('hide');
       alert('Updated successfully!');
 
-      // إعادة تحميل البيانات بناءً على ما تم تعديله
+   // Reload the data based on what was edited
       if (type === 'service') {
         loadServices();
       } else if (type === 'category') {

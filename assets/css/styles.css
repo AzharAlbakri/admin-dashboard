@@ -59,7 +59,6 @@ body {
     color: white;
 }
 
-/* Sidebar ثابت ويغطي طول الصفحة */
 #sidebar {
   width: 250px;
   height: 100vh;
@@ -98,7 +97,6 @@ body {
   width: 100%;
 }
 
-/* عند إغلاق الـ sidebar */
 #sidebar.closed {
   width: 0;
   overflow: hidden;
