@@ -1,5 +1,5 @@
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-//const API_BASE_URL = 'http://localhost:3000';
+//const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 $(document).ready(function () {
   $('#loginForm').on('submit', function (event) {
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     // Send data to API
     $.ajax({
-      url: `${API_BASE_URL}/adminLogin`,
+      url: `${API_BASE_URL}/dashboard/adminLogin`,
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ email, password }),
