@@ -363,7 +363,7 @@ $('#logoutLink').on('click', function () {
   function getBorderColor(status) {
     return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
   }
-
+console.log("test");
 
   function loadServices() {
     $('#content').html('<h3>Loading Services...</h3>');
