@@ -75,14 +75,14 @@
                         Appointments</a></li>
                 <li><a href="#" class="sidebar-link" id="articlesLink"><i class="fas fa-newspaper"></i> Articles</a>
                 </li>
-                <li><a href="#" class="sidebar-link" id="servicesLink"><i class="fas fa-newspaper"></i> Services</a>
+                <li><a href="#" class="sidebar-link" id="sectionsLink"><i class="fas fa-newspaper"></i> Sections</a>
                 </li>
 
             </ul>
             <button class="btn btn-success w-100 my-3" id="addArticleBtn"><i class="fas fa-plus"></i> Add new
                 article</button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
-                Add New Service
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+                Add New Section
             </button>
         </div>
 
@@ -291,84 +291,79 @@
         </div>
     </div>
 
-    <!-- Modal for Adding a New Service -->
-    <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel"
+    <!-- Modal for Adding a New Section -->
+    <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
+                    <h5 class="modal-title" id="addSectionModalLabel">Add New Section</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addServiceForm">
-                        <!-- Select or Add a Service -->
+                    <form id="addSectionForm">
+                        <!-- Select or Add a Section -->
                         <div class="mb-3">
-                            <label for="serviceSelect" class="form-label">Select an Existing Service</label>
-                            <select id="serviceSelect" class="form-select">
-                                <option value="">Choose a service...</option>
-                                <!-- Services will be loaded from the database -->
+                            <label for="sectionSelect" class="form-label">Select an Existing Section</label>
+                            <select id="sectionSelect" class="form-select">
+                                <option value="">Choose a section...</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Add a New Service</label>
-                            <input type="text" id="serviceTitleAr" class="form-control" placeholder="Title in Arabic">
-                            <input type="text" id="serviceTitleEn" class="form-control mt-2"
-                                placeholder="Title in English">
-                            <input type="text" id="serviceTitleEs" class="form-control mt-2"
-                                placeholder="Title in Spanish">
-                            <input type="url" id="serviceImage" class="form-control mt-2"
-                                placeholder="Service Image URL">
+                            <label class="form-label">Add a New Section</label>
+                            <input type="text" id="sectionTitleAr" class="form-control" placeholder="Title in Arabic" required>
+                            <input type="text" id="sectionTitleEn" class="form-control mt-2" placeholder="Title in English" required>
+                            <input type="text" id="sectionTitleEs" class="form-control mt-2" placeholder="Title in Spanish" required>
+                            <textarea id="sectionDescriptionAr" class="form-control mt-2" placeholder="Section Description in Arabic" required></textarea>
+                            <textarea id="sectionDescriptionEn" class="form-control mt-2" placeholder="Section Description in English" required></textarea>
+                            <textarea id="sectionDescriptionEs" class="form-control mt-2" placeholder="Section Description in Spanish" required></textarea>
+                            <input type="url" id="sectionImage" class="form-control mt-2" placeholder="Section Image URL" required>
                         </div>
-
+                    
                         <!-- Select or Add a Category -->
                         <div class="mb-3">
                             <label for="categorySelect" class="form-label">Select an Existing Category</label>
                             <select id="categorySelect" class="form-select">
                                 <option value="">Choose a category...</option>
-                                <!-- Categories will be loaded based on the selected service -->
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Add a New Category</label>
-                            <input type="text" id="categoryTitleAr" class="form-control" placeholder="Title in Arabic">
-                            <input type="text" id="categoryTitleEn" class="form-control mt-2"
-                                placeholder="Title in English">
-                            <input type="text" id="categoryTitleEs" class="form-control mt-2"
-                                placeholder="Title in Spanish">
-                            <input type="url" id="categoryImage" class="form-control mt-2"
-                                placeholder="Category Image URL">
+                            <input type="text" id="categoryTitleAr" class="form-control" placeholder="Title in Arabic" required>
+                            <input type="text" id="categoryTitleEn" class="form-control mt-2" placeholder="Title in English" required>
+                            <input type="text" id="categoryTitleEs" class="form-control mt-2" placeholder="Title in Spanish" required>
+                            <textarea id="categoryDescriptionAr" class="form-control mt-2" placeholder="Category Description in Arabic" required></textarea>
+                            <textarea id="categoryDescriptionEn" class="form-control mt-2" placeholder="Category Description in English" required></textarea>
+                            <textarea id="categoryDescriptionEs" class="form-control mt-2" placeholder="Category Description in Spanish" required></textarea>
+                            <input type="url" id="categoryImage" class="form-control mt-2" placeholder="Category Image URL" required>
                         </div>
-
+                    
                         <!-- Select or Add a Subcategory -->
                         <div class="mb-3">
                             <label class="form-label">Add a Subcategory</label>
-                            <input type="text" id="subCategoryTitleAr" class="form-control"
-                                placeholder="Title in Arabic">
-                            <input type="text" id="subCategoryTitleEn" class="form-control mt-2"
-                                placeholder="Title in English">
-                            <input type="text" id="subCategoryTitleEs" class="form-control mt-2"
-                                placeholder="Title in Spanish">
-                            <input type="url" id="subCategoryImage" class="form-control mt-2"
-                                placeholder="Subcategory Image URL">
+                            <input type="text" id="subCategoryTitleAr" class="form-control" placeholder="Title in Arabic" required>
+                            <input type="text" id="subCategoryTitleEn" class="form-control mt-2" placeholder="Title in English" required>
+                            <input type="text" id="subCategoryTitleEs" class="form-control mt-2" placeholder="Title in Spanish" required>
+                            <textarea id="subCategoryDescriptionAr" class="form-control mt-2" placeholder="Subcategory Description in Arabic" required></textarea>
+                            <textarea id="subCategoryDescriptionEn" class="form-control mt-2" placeholder="Subcategory Description in English" required></textarea>
+                            <textarea id="subCategoryDescriptionEs" class="form-control mt-2" placeholder="Subcategory Description in Spanish" required></textarea>
+                            <input type="url" id="subCategoryImage" class="form-control mt-2" placeholder="Subcategory Image URL" required>
                         </div>
-
+                    
                         <!-- Subcategory Content -->
                         <div class="mb-3">
                             <label class="form-label">Subcategory Content</label>
-                            <textarea id="subCategoryContentAr" class="form-control"
-                                placeholder="Content in Arabic"></textarea>
-                            <textarea id="subCategoryContentEn" class="form-control mt-2"
-                                placeholder="Content in English"></textarea>
-                            <textarea id="subCategoryContentEs" class="form-control mt-2"
-                                placeholder="Content in Spanish"></textarea>
+                            <textarea id="subCategoryContentAr" class="form-control" placeholder="Content in Arabic" required></textarea>
+                            <textarea id="subCategoryContentEn" class="form-control mt-2" placeholder="Content in English" required></textarea>
+                            <textarea id="subCategoryContentEs" class="form-control mt-2" placeholder="Content in Spanish" required></textarea>
                         </div>
-
+                    
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-success">Save</button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>

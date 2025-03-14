@@ -72,13 +72,13 @@ $(document).ready(function () {
   // Display data in the Navbar
   $('#userInfo').text(`${adminFullName} (${adminEmail}) - ${adminRole}`);
 
-// Logout
-$('#logoutLink').on('click', function () {
-  localStorage.removeItem('token'); // Remove token
-  window.location.href = 'index.html'; // Redirect to login page
-});
+  // Logout
+  $('#logoutLink').on('click', function () {
+    localStorage.removeItem('token'); // Remove token
+    window.location.href = 'index.html'; // Redirect to login page
+  });
 
-// Handle Sidebar links
+  // Handle Sidebar links
   $('#usersLink').on('click', function () {
     loadUsers();
   });
@@ -96,8 +96,8 @@ $('#logoutLink').on('click', function () {
     loadArticles();
   });
 
-  $('#servicesLink').on('click', function () {
-    loadServices();
+  $('#sectionsLink').on('click', function () {
+    loadSections();
   });
 
 
@@ -122,7 +122,7 @@ $('#logoutLink').on('click', function () {
     });
   }
 
-// Load patients
+  // Load patients
   function loadPatients() {
     $('#content').html('<h3>Loading Patients...</h3>');
     $.ajax({
@@ -186,7 +186,7 @@ $('#logoutLink').on('click', function () {
     });
   }
 
-// Load articles
+  // Load articles
   function loadArticles() {
     $('#content').html('<h3>Loading Articles...</h3>');
     $.ajax({
@@ -329,7 +329,7 @@ $('#logoutLink').on('click', function () {
 
   }
 
-// Function to update status on the server
+  // Function to update status on the server
   function updateAppointmentStatus(appointmentId, newStatus, callback) {
     $.ajax({
       url: `${API_BASE_URL}/dashboard/updateAppointment/${appointmentId}`,
@@ -346,7 +346,7 @@ $('#logoutLink').on('click', function () {
     });
   }
 
-// Function to determine the title based on the status
+  // Function to determine the title based on the status
   function getEventTitle(appointment) {
     if (appointment.status === 'locked') {
       return `Locked 🔒`;
@@ -354,76 +354,26 @@ $('#logoutLink').on('click', function () {
     return appointment.status === 'booked' ? `Booked: ${appointment._id}` : 'Available';
   }
 
-// Function to choose the color based on the status
+  // Function to choose the color based on the status
   function getColor(status) {
     return status === 'booked' ? 'orange' : status === 'locked' ? 'lightgray' : 'green';
   }
 
-// Function to choose the border color based on the status
+  // Function to choose the border color based on the status
   function getBorderColor(status) {
     return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
   }
-console.log("test");
+  console.log("test");
 
-  function loadServices() {
-    $('#content').html('<h3>Loading Services...</h3>');
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/services`,
-
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      success: function (response) {
-        let servicesHTML = '<h3>Services</h3><div class="row">';
-
-        response.forEach(service => {
-          const isChecked = service.status === 'Published' ? 'checked' : '';
-          const safeServiceData = JSON.stringify(service).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
-
-          servicesHTML += `
-          <div class="col-lg-3 mb-4">
-            <div class="card">
-              <img src="${service.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${service.title.ar}">
-              <div class="card-body">
-                <h5 class="card-title">${service.title.ar}</h5>
-                <p class="card-text">${service.description.ar}</p>
-                
-                <button class="btn btn-primary btn-sm" onclick="viewCategories('${service.serviceId}')">Read More</button>
-                
-
-                <button class="btn btn-warning btn-sm" onclick="openEditPopup('service', '${service.serviceId}', ${safeServiceData})">Edit</button>
-
-                <button class="btn btn-danger btn-sm" onclick="deleteService('${service.serviceId}')">Delete</button>
-
-                <!-- Switch Toggle for Publish/Unpublish -->
-                <div class="form-check form-switch mt-2">
-                  <input class="form-check-input" type="checkbox" role="switch" id="switch-${service.serviceId}"
-                    ${isChecked} onclick="toggleStatus('service', '${service.serviceId}', this.checked)">
-                  <label class="form-check-label" for="switch-${service.serviceId}">
-                    ${service.status}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>`;
-        });
-
-        servicesHTML += '</div>';
-        $('#content').html(servicesHTML);
-      },
-      error: function () {
-        $('#content').html('<p class="text-danger">Failed to load services.</p>');
-      },
-    });
-  }
-
-  // When a service is selected, load the associated categories
-  $('#serviceSelect').change(function () {
-    let serviceId = $(this).val();
+ 
+  // When a section is selected, load the associated categories
+  $('#sectionSelect').change(function () {
+    let sectionId = $(this).val();
     $('#categorySelect').empty().append('<option value="">اختر فئة...</option>');
 
-    if (serviceId) {
+    if (sectionId) {
       $.ajax({
-        url: `${API_BASE_URL}/dashboard/service/${serviceId}/categories`,
+        url: `${API_BASE_URL}/dashboard/section/${sectionId}/categories`,
         type: 'GET',
         headers: { 'Authorization': `Bearer ${token}` },
         success: function (data) {
@@ -589,7 +539,7 @@ function deleteArticle(articleId) {
 //#endregion
 
 
-//#region SERVICE METHODS
+//#region SECTION METHODS
 // Send data to the server when adding an article
 $('#addArticleForm').on('submit', function (e) {
   e.preventDefault();
@@ -626,47 +576,91 @@ $('#addArticleForm').on('submit', function (e) {
   });
 });
 
-// Send data to the server when adding a service
-$('#addServiceForm').submit(function (event) {
-  event.preventDefault(); // Prevent page reload
+document.getElementById('addSectionForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent default form submission
 
-  let formData = {
+  // Collect form data
+  const formData = {
     title: {
-      ar: $('#serviceTitleAr').val(),
-      en: $('#serviceTitleEn').val(),
-      es: $('#serviceTitleEs').val()
+        ar: document.getElementById('sectionTitleAr').value,
+        en: document.getElementById('sectionTitleEn').value,
+        es: document.getElementById('sectionTitleEs').value
     },
     description: {
-      ar: $('#serviceDescAr').val(),
-      en: $('#serviceDescEn').val(),
-      es: $('#serviceDescEs').val()
+        ar: document.getElementById('sectionDescriptionAr').value,
+        en: document.getElementById('sectionDescriptionEn').value,
+        es: document.getElementById('sectionDescriptionEs').value
     },
-    imageUrl: $('#serviceImageUrl').val()
-  };
+    imageUrl: document.getElementById('sectionImage').value,
+    categories: [
+        {
+            title: {
+                ar: document.getElementById('categoryTitleAr').value,
+                en: document.getElementById('categoryTitleEn').value,
+                es: document.getElementById('categoryTitleEs').value
+            },
+            description: {
+                ar: document.getElementById('categoryDescriptionAr').value,
+                en: document.getElementById('categoryDescriptionEn').value,
+                es: document.getElementById('categoryDescriptionEs').value
+            },
+            imageUrl: document.getElementById('categoryImage').value,
+            subcategories: [
+                {
+                    title: {
+                        ar: document.getElementById('subCategoryTitleAr').value,
+                        en: document.getElementById('subCategoryTitleEn').value,
+                        es: document.getElementById('subCategoryTitleEs').value
+                    },
+                    description: {
+                        ar: document.getElementById('subCategoryDescriptionAr').value,
+                        en: document.getElementById('subCategoryDescriptionEn').value,
+                        es: document.getElementById('subCategoryDescriptionEs').value
+                    },
+                    imageUrl: document.getElementById('subCategoryImage').value,
+                    content: {
+                        ar: document.getElementById('subCategoryContentAr').value,
+                        en: document.getElementById('subCategoryContentEn').value,
+                        es: document.getElementById('subCategoryContentEs').value
+                    }
+                }
+            ]
+        }
+    ]
+};
 
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/services`,
-    type: 'POST',
-    contentType: 'application/json',
-    headers: { 'Authorization': `Bearer ${token}` },
-    data: JSON.stringify(formData),
-    success: function (response) {
-      alert('تمت إضافة الخدمة بنجاح!');
-      location.reload(); // Reload the page after adding
-    },
-    error: function (err) {
-      console.error('Error adding service:', err);
-      alert('حدث خطأ أثناء إضافة الخدمة!');
+
+  // Here you can send form data to your server or handle it accordingly
+  console.log(formData);
+  // Example: Sending data using Fetch API
+  fetch(`${API_BASE_URL}/dashboard/addSection`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` // Send token for authorization
+      },
+      body: JSON.stringify(formData)
+  }).then(response => response.json())
+    .then(section => {
+      if (section) {
+      $('#addSectionModal').modal('hide');
+      alert('Section added successfully!');
+      loadSections();
+      } else {
+        alert('Failed to add the section');
     }
-  });
+
+    })
+    .catch(error => console.error('Error:', error));
 });
 
-// Fetch categories when clicking on "Read More" for the service
-function viewCategories(serviceId) {
-  console.log("viewCategories serviceId", serviceId);
+
+// Fetch categories when clicking on "Read More" for the section
+function viewCategories(sectionId) {
+  console.log("viewCategories sectionId", sectionId);
   $('#content').html('<h3>Loading Categories...</h3>');
   $.ajax({
-    url: `${API_BASE_URL}/dashboard/service/${serviceId}/categories`,
+    url: `${API_BASE_URL}/dashboard/section/${sectionId}/categories`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
     success: function (response) {
@@ -685,15 +679,15 @@ function viewCategories(serviceId) {
                 <h5 class="card-title">${category.title.ar}</h5>
                 <p class="card-text">${category.description.ar}</p>
                 
-                <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${serviceId}', '${category.categoryId}')">Read More</button>
+                <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${sectionId}', '${category.categoryId}')">Read More</button>
                 
-                <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${serviceId}', ${safeCategoryData})">Edit</button>
+                <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${sectionId}', ${safeCategoryData})">Edit</button>
 
-                <button class="btn btn-danger btn-sm" onclick="deleteCategory('${serviceId}', '${category.categoryId}')">Delete</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCategory('${sectionId}', '${category.categoryId}')">Delete</button>
 
                 <div class="form-check form-switch mt-2">
                   <input class="form-check-input" type="checkbox" role="switch" id="switch-${category.categoryId}"
-                    ${isChecked} onclick="serviceToggleStatus('category', '${category.categoryId}', this.checked)">
+                    ${isChecked} onclick="sectionToggleStatus('category', '${category.categoryId}', this.checked)">
                   <label class="form-check-label" for="switch-${category.categoryId}">
                     ${category.status}
                   </label>
@@ -723,14 +717,14 @@ function decodeBase64(str) {
 }
 
 // Fetch subcategories when clicking on "Read More" for the category
-function viewSubcategories(serviceId, categoryId) {
-  console.log("serviceId", serviceId);
+function viewSubcategories(sectionId, categoryId) {
+  console.log("sectionId", sectionId);
   console.log("categoryId", categoryId);
 
   $('#content').html('<h3>Loading Subcategories...</h3>');
 
   $.ajax({
-    url: `${API_BASE_URL}/dashboard/service/${serviceId}/category/${categoryId}/subcategories`,
+    url: `${API_BASE_URL}/dashboard/section/${sectionId}/category/${categoryId}/subcategories`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
     success: function (response) {
@@ -740,7 +734,7 @@ function viewSubcategories(serviceId, categoryId) {
         console.log("subcategory", subcategory);
         const isChecked = subcategory.status === 'Published' ? 'checked' : '';
 
-// ✅ Convert subcategory data to Base64 using UTF-8
+        // ✅ Convert subcategory data to Base64 using UTF-8
         const encodedData = encodeBase64(JSON.stringify(subcategory));
 
         subcategoriesHTML += `
@@ -754,11 +748,11 @@ function viewSubcategories(serviceId, categoryId) {
                       <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
 
                       <button class="btn btn-warning btn-sm" onclick="openEditPopup('subcategory', '${categoryId}', '${encodedData}')">Edit</button>
-                      <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${serviceId}', '${categoryId}', '${subcategory.subcategoryId}')">Delete</button>
+                      <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${sectionId}', '${categoryId}', '${subcategory.subcategoryId}')">Delete</button>
 
                       <div class="form-check form-switch mt-2">
                         <input class="form-check-input" type="checkbox" role="switch" id="switch-${subcategory.subcategoryId}"
-                          ${isChecked} onclick="serviceToggleStatus('subcategory', '${subcategory.subcategoryId}', this.checked)">
+                          ${isChecked} onclick="sectionToggleStatus('subcategory', '${subcategory.subcategoryId}', this.checked)">
                         <label class="form-check-label" for="switch-${subcategory.subcategoryId}">
                           ${subcategory.status}
                         </label>
@@ -804,7 +798,7 @@ function updateContent(encodedData) {
 }
 
 // Update the publication status
-function serviceToggleStatus(type, id, isChecked) {
+function sectionToggleStatus(type, id, isChecked) {
   const newStatus = isChecked ? 'Published' : 'Unpublished';
   $.ajax({
     url: `${API_BASE_URL}/dashboard/${type}/${id}/status`,
@@ -821,17 +815,17 @@ function serviceToggleStatus(type, id, isChecked) {
 }
 
 // Delete item
-function deleteService(serviceId) {
-  if (confirm('Are you sure you want to delete this service?')) {
+function deleteSection(sectionId) {
+  if (confirm('Are you sure you want to delete this section?')) {
     $.ajax({
-      url: `${API_BASE_URL}/dashboard/service/${serviceId}`,
+      url: `${API_BASE_URL}/dashboard/section/${sectionId}`,
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
       success: function () {
-        loadServices();
+        loadSections();
       },
       error: function () {
-        alert('Failed to delete service.');
+        alert('Failed to delete section.');
       },
     });
   }
@@ -844,8 +838,8 @@ function openEditPopup(type, parentId, item) {
 
   $('#lblEditContentEn').hide();
   $('#editContentEn').hide();
-  console.log("service popup", type, parentId, item);
-  $('#editId').val(item._id || item.serviceId || item.categoryId || item.subcategoryId);
+  console.log("section popup", type, parentId, item);
+  $('#editId').val(item._id || item.sectionId || item.categoryId || item.subcategoryId);
   $('#editType').val(type);
 
   $('#editTitleAr').val(item.title.ar);
@@ -864,7 +858,7 @@ function openEditPopup(type, parentId, item) {
 
   $('#editPopup').modal('show');
 
-// Store parentId to use it in the update if the edit is on a category or subcategory
+  // Store parentId to use it in the update if the edit is on a category or subcategory
   $('#editPopup').data('parentId', parentId || null);
 }
 
@@ -889,15 +883,15 @@ function saveChanges() {
 
   console.log("type", type);
   console.log("id", id);
-  // let url = `${API_BASE_URL}/dashboard/service/${parentId}/category/${id}`;
+  // let url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
 
   if (type === 'category') {
     console.log("url category", url);
-    url = `${API_BASE_URL}/dashboard/service/${parentId}/category/${id}`;
+    url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
   } else if (type === 'subcategory') {
     console.log("url subcategory", url);
 
-    url = `${API_BASE_URL}/dashboard/service/${parentId.split('-')[0]}/category/${parentId.split('-')[1]}/subcategory/${id}`;
+    url = `${API_BASE_URL}/dashboard/section/${parentId.split('-')[0]}/category/${parentId.split('-')[1]}/subcategory/${id}`;
   }
 
   $.ajax({
@@ -909,9 +903,9 @@ function saveChanges() {
       $('#editPopup').modal('hide');
       alert('Updated successfully!');
 
-   // Reload the data based on what was edited
-      if (type === 'service') {
-        loadServices();
+      // Reload the data based on what was edited
+      if (type === 'section') {
+        loadSections();
       } else if (type === 'category') {
         viewCategories(parentId);
       } else if (type === 'subcategory') {
@@ -923,4 +917,56 @@ function saveChanges() {
     }
   });
 }
+
+function loadSections() {
+  $('#content').html('<h3>Loading Sections...</h3>');
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/sections`,
+
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (response) {
+      let sectionsHTML = '<h3>Sections</h3><div class="row">';
+      console.log(response);
+      response.forEach(section => {
+        const isChecked = section.status === 'Published' ? 'checked' : '';
+        const safeSectionData = JSON.stringify(section).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
+
+        sectionsHTML += `
+        <div class="col-lg-3 mb-4">
+          <div class="card">
+            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title.ar}">
+            <div class="card-body">
+              <h5 class="card-title">${section.title.ar}</h5>
+              <p class="card-text">${section.description.ar}</p>
+              
+              <button class="btn btn-primary btn-sm" onclick="viewCategories('${section.sectionId}')">Read More</button>
+              
+
+              <button class="btn btn-warning btn-sm" onclick="openEditPopup('section', '${section.sectionId}', ${safeSectionData})">Edit</button>
+
+              <button class="btn btn-danger btn-sm" onclick="deleteSection('${section.sectionId}')">Delete</button>
+
+              <!-- Switch Toggle for Publish/Unpublish -->
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="switch-${section.sectionId}"
+                  ${isChecked} onclick="toggleStatus('section', '${section.sectionId}', this.checked)">
+                <label class="form-check-label" for="switch-${section.sectionId}">
+                  ${section.status}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      sectionsHTML += '</div>';
+      $('#content').html(sectionsHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load sections.</p>');
+    },
+  });
+}
+
 //#endregion
