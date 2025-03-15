@@ -15,20 +15,37 @@ $('#addArticleBtn').click(function () {
 //#endregion
 
 
-// Initialize Quill Editor
-var quill = new Quill('#editor-container', {
-  theme: 'snow', // Editor theme
-  modules: {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline'],
-      [{ color: [] }, { background: [] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['image', 'link', 'blockquote', 'code-block'],
-      [{ align: [] }],
-      ['clean'] // Remove formatting
-    ]
-  }
+// // Initialize Quill Editor
+// var quill = new Quill('#subCategoryContentEs', {
+//   theme: 'snow',
+//   modules: {
+//     toolbar: [
+//       ['bold', 'italic', 'underline', 'strike'],
+//       [{ header: [1, 2, 3, 4, 5, 6, false] }],
+//       [{ font: [] }],
+//       [{ size: ['small', false, 'large', 'huge'] }],
+//       [{ color: [] }, { background: [] }],
+//       [{ list: 'ordered' }, { list: 'bullet' }],
+//       [{ indent: '-1' }, { indent: '+1' }],
+//       [{ align: [] }],
+//       [{ direction: 'rtl' }],
+//       ['image','video', 'link', 'blockquote', 'code-block'],
+//       ['clean'],
+//     ],
+//   }
+// });
+$('#subCategoryContentEs').summernote({
+  toolbar: [
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['table', ['table']],
+    ['insert', ['link', 'picture', 'video']],
+    ['view', ['fullscreen', 'codeview', 'help']],
+    ['insert', ['hr', 'removeFormat']], // تأكد أن hr و removeFormat هنا
+    ['style', ['h1', 'h2', 'h3', 'p']] // إضافة العناوين والفقرات
+  ]
 });
 
 

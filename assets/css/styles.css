@@ -126,3 +126,7 @@ thead {
   background: rgb(196 216 219) !important;
 }
 
+table.table.table-bordered {
+  border: none !important;
+  border-color: #f0f8ff00 !important;
+}
