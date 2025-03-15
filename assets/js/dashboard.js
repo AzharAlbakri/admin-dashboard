@@ -1,6 +1,6 @@
 
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-// const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 //#region TOKEN
 // Check the token
@@ -101,270 +101,7 @@ $(document).ready(function () {
   });
 
 
-  // تحميل المستخدمين
-  function loadUsers() {
-    $('#content').html('<h3>Loading Users...</h3>');
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/getAllUsers`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      success: function (response) {
-        let usersHTML = '<h3>Users</h3><table class="table table-striped"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Contact Method</th><th>Consultation Type</th><th>Additional Info</th><th>Created At</th></tr></thead><tbody>';
-        response.forEach(user => {
-          usersHTML += `<tr><td>${user._id}</td><td>${user.fullName}</td><td>${user.email}</td><td>${user.phone}</td><td>${user.contactMethod}</td><td>${user.consultationType}</td><td>${user.additionalInfo}</td><td>${user.createdAt}</td></tr>`;
-        });
-        usersHTML += '</tbody></table>';
-        $('#content').html(usersHTML);
-      },
-      error: function () {
-        $('#content').html('<p class="text-danger">Failed to load users.</p>');
-      },
-    });
-  }
-
-  // Load patients
-  function loadPatients() {
-    $('#content').html('<h3>Loading Patients...</h3>');
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/getAllPatients`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }, // Send token for verification
-      success: function (response) {
-        let patientsHTML = `
-          <h3>Patients</h3>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Identity Number</th>
-                <th>Appointment Date</th>
-                <th>Appointment Time</th>
-                <th>Reason</th>
-                <th>Preferred Doctor</th>
-                <th>Additional Notes</th>
-                <th>Insurance</th>
-                <th>Insurance Company</th>
-                <th>Policy Number</th>
-                <th>Reminder Method</th>
-                <th>Booked At</th>
-                <th>Agree to Terms</th>
-              </tr>
-            </thead>
-            <tbody>`;
-
-        response.forEach(patient => {
-          patientsHTML += `
-            <tr>
-              <td>${patient._id}</td>
-              <td>${patient.patient_name}</td>
-              <td>${patient.phone_number}</td>
-              <td>${patient.email}</td>
-              <td>${patient.identity_number}</td>
-              <td>${patient.appointment_date}</td>
-              <td>${patient.appointment_time}</td>
-              <td>${patient.appointment_reason}</td>
-              <td>${patient.preferred_doctor || 'N/A'}</td>
-              <td>${patient.additional_notes || 'N/A'}</td>
-              <td>${patient.has_insurance ? 'Yes' : 'No'}</td>
-              <td>${patient.insurance_company || 'N/A'}</td>
-              <td>${patient.insurance_policy_number || 'N/A'}</td>
-              <td>${patient.reminder_method}</td>
-              <td>${new Date(patient.booked_at).toLocaleString()}</td>
-              <td>${patient.agree_to_terms ? 'Yes' : 'No'}</td>
-            </tr>`;
-        });
-
-        patientsHTML += `</tbody></table>`;
-        $('#content').html(patientsHTML);
-      },
-      error: function () {
-        $('#content').html('<p class="text-danger">Failed to load patients.</p>');
-      },
-    });
-  }
-
-  // Load articles
-  function loadArticles() {
-    $('#content').html('<h3>Loading Articles...</h3>');
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/getAllArticles`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      success: function (response) {
-        let articlesHTML = '<h3>Articles</h3> <div class="row">';
-
-        response.forEach(article => {
-          const isChecked = article.status === 'Published' ? 'checked' : '';
-          articlesHTML += `
-            <div class="col-lg-2 mb-4">
-              <div class="card">
-                <img src="${article.images[0] || 'default-image.jpg'}" class="card-img-top" alt="${article.title}">
-                <div class="card-body">
-                  <h5 class="card-title">${article.title}</h5>
-                  <p class="card-text">${article.summary}</p>
-                  
-                  <button class="btn btn-primary btn-sm" onclick="viewArticle('${article._id}')">Read More</button>
-                  <button class="btn btn-warning btn-sm" onclick="editArticle('${article._id}')">Edit</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article._id}')">Delete</button>
   
-                  <!-- Switch Toggle for Publish/Unpublish -->
-                  <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" type="checkbox" role="switch" id="switch-${article._id}"
-                      ${isChecked} onclick="toggleStatus('${article._id}', this.checked)">
-                    <label class="form-check-label" for="switch-${article._id}">
-                      ${article.status}
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>`;
-        });
-        articlesHTML += '</div>';
-        $('#content').html(articlesHTML);
-      },
-      error: function () {
-        $('#content').html('<p class="text-danger">Failed to load articles.</p>');
-      },
-    });
-  }
-
-  function loadCalendar() {
-    $('#content').html('<h3>Loading Calendar...</h3>');
-
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/getAllAppointments`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      success: function (appointments) {
-        $('#content').html('<div id="calendar"></div>');
-
-        console.log(appointments);
-        let events = appointments.map(appointment => ({
-          id: appointment._id,
-          title: getEventTitle(appointment),
-          start: `${appointment.date}T${appointment.time}`,
-          backgroundColor: getColor(appointment.status),
-          borderColor: getBorderColor(appointment.status),
-          extendedProps: {
-            status: appointment.status,
-            date: appointment.date,
-            patientName: appointment.patientName || "N/A",
-            time: appointment.time,
-            id: appointment._id
-          }
-        }));
-
-        let calendarEl = document.getElementById('calendar');
-
-        if (calendarEl) {
-          let calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: events,
-            eventClick: function (info) {
-              console.log("Appointment Details:", info.event.extendedProps);
-
-              let currentId = info.event.extendedProps.id;
-              let currentDate = info.event.extendedProps.date;
-              let currentPatientName = info.event.extendedProps.patientName;
-              let currentTime = info.event.extendedProps.time;
-              let currentStatus = info.event.extendedProps.status;
-
-              let popupContent = `
-                          <div class="popup">
-                              <h3>Appointment Details</h3>
-                              <p><strong>ID:</strong> ${currentId}</p>
-                              <p><strong>Date:</strong> ${currentDate}</p>
-                              <p><strong>Time:</strong> ${currentTime}</p>
-                              <p><strong>Patient:</strong> ${currentPatientName}</p>
-                              <p><strong>Status:</strong> ${currentStatus}</p>
-                              <label for="newStatus">Change Status:</label>
-                              <select id="newStatus">
-                                  <option value="available" ${currentStatus === "available" ? "selected" : ""}>Available</option>
-                                  <option value="booked" ${currentStatus === "booked" ? "selected" : ""}>Booked</option>
-                                  <option value="locked" ${currentStatus === "locked" ? "selected" : ""}>Locked</option>
-                              </select>
-                              <button id="updateStatusBtn">Update</button>
-                              <button id="closePopup">Close</button>
-                          </div>
-                      `;
-
-              $('body').append(`<div class="popup-container">${popupContent}</div>`);
-
-              $('#closePopup').click(function () {
-                $('.popup-container').remove();
-              });
-
-              $('#updateStatusBtn').click(function () {
-                let newStatus = $('#newStatus').val();
-                if (newStatus && ["available", "booked", "locked"].includes(newStatus)) {
-                  updateAppointmentStatus(currentId, newStatus, () => {
-                    info.event.setProp('backgroundColor', getColor(newStatus));
-                    info.event.setProp('borderColor', getBorderColor(newStatus));
-                    info.event.setProp('title', getEventTitle({ _id: currentId, status: newStatus }));
-                    info.event.setExtendedProp('status', newStatus);
-                    $('.popup-container').remove();
-                  });
-                }
-              });
-            }
-          });
-
-          calendar.render();
-        } else {
-          console.error("Calendar element not found!");
-        }
-      },
-      error: function () {
-        $('#content').html('<p class="text-danger">Failed to load calendar.</p>');
-      }
-    });
-
-  }
-
-  // Function to update status on the server
-  function updateAppointmentStatus(appointmentId, newStatus, callback) {
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/updateAppointment/${appointmentId}`,
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: JSON.stringify({ status: newStatus }),
-      success: function () {
-        alert("Appointment updated successfully!");
-        if (callback) callback();
-      },
-      error: function () {
-        alert("Failed to update appointment.");
-      }
-    });
-  }
-
-  // Function to determine the title based on the status
-  function getEventTitle(appointment) {
-    if (appointment.status === 'locked') {
-      return `Locked 🔒`;
-    }
-    return appointment.status === 'booked' ? `Booked: ${appointment._id}` : 'Available';
-  }
-
-  // Function to choose the color based on the status
-  function getColor(status) {
-    return status === 'booked' ? 'orange' : status === 'locked' ? 'lightgray' : 'green';
-  }
-
-  // Function to choose the border color based on the status
-  function getBorderColor(status) {
-    return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
-  }
-  console.log("test");
-
  
   // When a section is selected, load the associated categories
   $('#sectionSelect').change(function () {
@@ -390,6 +127,269 @@ $(document).ready(function () {
 
 });
 //#endregion
+// تحميل المستخدمين
+function loadUsers() {
+  $('#content').html('<h3>Loading Users...</h3>');
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/getAllUsers`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (response) {
+      let usersHTML = '<h3>Users</h3><table class="table table-striped"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Contact Method</th><th>Consultation Type</th><th>Additional Info</th><th>Created At</th></tr></thead><tbody>';
+      response.forEach(user => {
+        usersHTML += `<tr><td>${user._id}</td><td>${user.fullName}</td><td>${user.email}</td><td>${user.phone}</td><td>${user.contactMethod}</td><td>${user.consultationType}</td><td>${user.additionalInfo}</td><td>${user.createdAt}</td></tr>`;
+      });
+      usersHTML += '</tbody></table>';
+      $('#content').html(usersHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load users.</p>');
+    },
+  });
+}
+
+// Load patients
+function loadPatients() {
+  $('#content').html('<h3>Loading Patients...</h3>');
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/getAllPatients`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` }, // Send token for verification
+    success: function (response) {
+      let patientsHTML = `
+        <h3>Patients</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Identity Number</th>
+              <th>Appointment Date</th>
+              <th>Appointment Time</th>
+              <th>Reason</th>
+              <th>Preferred Doctor</th>
+              <th>Additional Notes</th>
+              <th>Insurance</th>
+              <th>Insurance Company</th>
+              <th>Policy Number</th>
+              <th>Reminder Method</th>
+              <th>Booked At</th>
+              <th>Agree to Terms</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+      response.forEach(patient => {
+        patientsHTML += `
+          <tr>
+            <td>${patient._id}</td>
+            <td>${patient.patient_name}</td>
+            <td>${patient.phone_number}</td>
+            <td>${patient.email}</td>
+            <td>${patient.identity_number}</td>
+            <td>${patient.appointment_date}</td>
+            <td>${patient.appointment_time}</td>
+            <td>${patient.appointment_reason}</td>
+            <td>${patient.preferred_doctor || 'N/A'}</td>
+            <td>${patient.additional_notes || 'N/A'}</td>
+            <td>${patient.has_insurance ? 'Yes' : 'No'}</td>
+            <td>${patient.insurance_company || 'N/A'}</td>
+            <td>${patient.insurance_policy_number || 'N/A'}</td>
+            <td>${patient.reminder_method}</td>
+            <td>${new Date(patient.booked_at).toLocaleString()}</td>
+            <td>${patient.agree_to_terms ? 'Yes' : 'No'}</td>
+          </tr>`;
+      });
+
+      patientsHTML += `</tbody></table>`;
+      $('#content').html(patientsHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load patients.</p>');
+    },
+  });
+}
+
+// Load articles
+function loadArticles() {
+  $('#content').html('<h3>Loading Articles...</h3>');
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/getAllArticles`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (response) {
+      let articlesHTML = '<h3>Articles</h3> <div class="row">';
+
+      response.forEach(article => {
+        const isChecked = article.status === 'Published' ? 'checked' : '';
+        articlesHTML += `
+          <div class="col-lg-2 mb-4">
+            <div class="card">
+              <img src="${article.images[0] || 'default-image.jpg'}" class="card-img-top" alt="${article.title}">
+              <div class="card-body">
+                <h5 class="card-title">${article.title}</h5>
+                <p class="card-text">${article.summary}</p>
+                
+                <button class="btn btn-primary btn-sm" onclick="viewArticle('${article._id}')">Read More</button>
+                <button class="btn btn-warning btn-sm" onclick="editArticle('${article._id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article._id}')">Delete</button>
+
+                <!-- Switch Toggle for Publish/Unpublish -->
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" role="switch" id="switch-${article._id}"
+                    ${isChecked} onclick="toggleStatus('${article._id}', this.checked)">
+                  <label class="form-check-label" for="switch-${article._id}">
+                    ${article.status}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+      articlesHTML += '</div>';
+      $('#content').html(articlesHTML);
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load articles.</p>');
+    },
+  });
+}
+
+function loadCalendar() {
+  $('#content').html('<h3>Loading Calendar...</h3>');
+
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/getAllAppointments`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    success: function (appointments) {
+      $('#content').html('<div id="calendar"></div>');
+
+      let events = appointments.map(appointment => ({
+        id: appointment._id,
+        title: getEventTitle(appointment),
+        start: `${appointment.date}T${appointment.time}`,
+        backgroundColor: getColor(appointment.status),
+        borderColor: getBorderColor(appointment.status),
+        extendedProps: {
+          status: appointment.status,
+          date: appointment.date,
+          patientName: appointment.patientName || "N/A",
+          time: appointment.time,
+          id: appointment._id
+        }
+      }));
+
+      let calendarEl = document.getElementById('calendar');
+
+      if (calendarEl) {
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          events: events,
+          eventClick: function (info) {
+            console.log("Event Details:", info.event);
+            console.log("Appointment Details:", info.event.extendedProps);
+
+            let currentId = info.event.extendedProps.id;
+            let currentDate = info.event.extendedProps.date;
+            let currentPatientName = info.event.extendedProps.patientName;
+            let currentTime = info.event.extendedProps.time;
+            let currentStatus = info.event.extendedProps.status;
+
+            let popupContent = `
+                        <div class="popup">
+                            <h3>Appointment Details</h3>
+                            <p><strong>ID:</strong> ${currentId}</p>
+                            <p><strong>Date:</strong> ${currentDate}</p>
+                            <p><strong>Time:</strong> ${currentTime}</p>
+                            <p><strong>Patient:</strong> ${currentPatientName}</p>
+                            <p><strong>Status:</strong> ${currentStatus}</p>
+                            <label for="newStatus">Change Status:</label>
+                            <select id="newStatus">
+                                <option value="available" ${currentStatus === "available" ? "selected" : ""}>Available</option>
+                                <option value="booked" ${currentStatus === "booked" ? "selected" : ""}>Booked</option>
+                                <option value="locked" ${currentStatus === "locked" ? "selected" : ""}>Locked</option>
+                            </select>
+                            <button id="updateStatusBtn">Update</button>
+                            <button id="closePopup">Close</button>
+                        </div>
+                    `;
+
+            $('body').append(`<div class="popup-container">${popupContent}</div>`);
+
+            $('#closePopup').click(function () {
+              $('.popup-container').remove();
+            });
+
+            $('#updateStatusBtn').click(function () {
+              let newStatus = $('#newStatus').val();
+              if (newStatus && ["available", "booked", "locked"].includes(newStatus)) {
+                updateAppointmentStatus(currentId, newStatus, () => {
+                  info.event.setProp('backgroundColor', getColor(newStatus));
+                  info.event.setProp('borderColor', getBorderColor(newStatus));
+                  info.event.setProp('title', getEventTitle({ _id: currentId, status: newStatus }));
+                  info.event.setExtendedProp('status', newStatus);
+                  $('.popup-container').remove();
+                });
+              }
+            });
+          }
+        });
+
+        calendar.render();
+      } else {
+        console.error("Calendar element not found!");
+      }
+    },
+    error: function () {
+      $('#content').html('<p class="text-danger">Failed to load calendar.</p>');
+    }
+  });
+
+}
+
+// Function to update status on the server
+function updateAppointmentStatus(appointmentId, newStatus, callback) {
+  $.ajax({
+    url: `${API_BASE_URL}/dashboard/updateAppointment/${appointmentId}`,
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    data: JSON.stringify({ status: newStatus }),
+    success: function () {
+      alert("Appointment updated successfully!");
+      if (callback) callback();
+    },
+    error: function () {
+      alert("Failed to update appointment.");
+    }
+  });
+}
+
+// Function to determine the title based on the status
+function getEventTitle(appointment) {
+  if (appointment.status === 'locked') {
+    return `Locked 🔒`;
+  }
+  return appointment.status === 'booked' ? `Booked: ${appointment._id}` : 'Available';
+}
+
+// Function to choose the color based on the status
+function getColor(status) {
+  return status === 'booked' ? 'orange' : status === 'locked' ? 'lightgray' : 'green';
+}
+
+// Function to choose the border color based on the status
+function getBorderColor(status) {
+  return status === 'booked' ? 'darkorange' : status === 'locked' ? 'gray' : 'darkgreen';
+}
+console.log("test");
 
 //#region ARTICLE METHODS
 //View selected articl in popup
