@@ -1,6 +1,6 @@
 
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-// const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 //#region TOKEN
 // Check the token
@@ -378,7 +378,7 @@ $(document).ready(function () {
         headers: { 'Authorization': `Bearer ${token}` },
         success: function (data) {
           data.forEach(category => {
-            $('#categorySelect').append(`<option value="${category.categoryId}">${category.title.ar}</option>`);
+            $('#categorySelect').append(`<option value="${category.categoryId}">${category.title.es}</option>`);
           });
         },
         error: function (err) {
@@ -582,45 +582,45 @@ document.getElementById('addSectionForm').addEventListener('submit', function(ev
   // Collect form data
   const formData = {
     title: {
-        ar: document.getElementById('sectionTitleAr').value,
-        en: document.getElementById('sectionTitleEn').value,
+        // ar: document.getElementById('sectionTitleAr').value,
+        // en: document.getElementById('sectionTitleEn').value,
         es: document.getElementById('sectionTitleEs').value
     },
     description: {
-        ar: document.getElementById('sectionDescriptionAr').value,
-        en: document.getElementById('sectionDescriptionEn').value,
+        // ar: document.getElementById('sectionDescriptionAr').value,
+        // en: document.getElementById('sectionDescriptionEn').value,
         es: document.getElementById('sectionDescriptionEs').value
     },
     imageUrl: document.getElementById('sectionImage').value,
     categories: [
         {
             title: {
-                ar: document.getElementById('categoryTitleAr').value,
-                en: document.getElementById('categoryTitleEn').value,
+                // ar: document.getElementById('categoryTitleAr').value,
+                // en: document.getElementById('categoryTitleEn').value,
                 es: document.getElementById('categoryTitleEs').value
             },
             description: {
-                ar: document.getElementById('categoryDescriptionAr').value,
-                en: document.getElementById('categoryDescriptionEn').value,
+                // ar: document.getElementById('categoryDescriptionAr').value,
+                // en: document.getElementById('categoryDescriptionEn').value,
                 es: document.getElementById('categoryDescriptionEs').value
             },
             imageUrl: document.getElementById('categoryImage').value,
             subcategories: [
                 {
                     title: {
-                        ar: document.getElementById('subCategoryTitleAr').value,
-                        en: document.getElementById('subCategoryTitleEn').value,
+                        // ar: document.getElementById('subCategoryTitleAr').value,
+                        // en: document.getElementById('subCategoryTitleEn').value,
                         es: document.getElementById('subCategoryTitleEs').value
                     },
                     description: {
-                        ar: document.getElementById('subCategoryDescriptionAr').value,
-                        en: document.getElementById('subCategoryDescriptionEn').value,
+                        // ar: document.getElementById('subCategoryDescriptionAr').value,
+                        // en: document.getElementById('subCategoryDescriptionEn').value,
                         es: document.getElementById('subCategoryDescriptionEs').value
                     },
                     imageUrl: document.getElementById('subCategoryImage').value,
                     content: {
-                        ar: document.getElementById('subCategoryContentAr').value,
-                        en: document.getElementById('subCategoryContentEn').value,
+                        // ar: document.getElementById('subCategoryContentAr').value,
+                        // en: document.getElementById('subCategoryContentEn').value,
                         es: document.getElementById('subCategoryContentEs').value
                     }
                 }
@@ -674,10 +674,10 @@ function viewCategories(sectionId) {
         categoriesHTML += `
           <div class="col-lg-3 mb-4">
             <div class="card">
-              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title.ar}">
+              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title.es}">
               <div class="card-body">
-                <h5 class="card-title">${category.title.ar}</h5>
-                <p class="card-text">${category.description.ar}</p>
+                <h5 class="card-title">${category.title.es}</h5>
+                <p class="card-text">${category.description.es}</p>
                 
                 <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${sectionId}', '${category.categoryId}')">Read More</button>
                 
@@ -740,10 +740,10 @@ function viewSubcategories(sectionId, categoryId) {
         subcategoriesHTML += `
                 <div class="col-lg-3 mb-4">
                   <div class="card">
-                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title.ar}">
+                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title.es}">
                     <div class="card-body">
-                      <h5 class="card-title">${subcategory.title.ar}</h5>
-                      <p class="card-text">${subcategory.description.ar}</p>
+                      <h5 class="card-title">${subcategory.title.es}</h5>
+                      <p class="card-text">${subcategory.description.es}</p>
 
                       <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
 
@@ -776,7 +776,7 @@ function showContent(encodedData) {
   let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
 
   let contentHTML = `
-    <h3>${subcategory.title.ar}</h3>
+    <h3>${subcategory.title.es}</h3>
     <label for="languageSelect"><strong>Select Language:</strong></label>
     <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
       <option value="ar" selected>العربية</option>
@@ -784,7 +784,7 @@ function showContent(encodedData) {
       <option value="es">Español</option>
     </select>
     <div id="contentDisplay" class="mt-3">
-      <p>${subcategory.content.ar}</p>
+      <p>${subcategory.content.es}</p>
     </div>`;
 
   $('#content').html(contentHTML);
@@ -842,9 +842,9 @@ function openEditPopup(type, parentId, item) {
   $('#editId').val(item._id || item.sectionId || item.categoryId || item.subcategoryId);
   $('#editType').val(type);
 
-  $('#editTitleAr').val(item.title.ar);
+  $('#editTitleAr').val(item.title.es);
   $('#editTitleEn').val(item.title.en);
-  $('#editDescriptionAr').val(item.description.ar);
+  $('#editDescriptionAr').val(item.description.es);
   $('#editDescriptionEn').val(item.description.en);
   $('#editImageUrl').val(item.imageUrl);
 
@@ -852,7 +852,7 @@ function openEditPopup(type, parentId, item) {
     console.log("wwwwww", item);
     $('#editContentAr').show();
     $('#editContentEn').show();
-    $('#editContentAr').val(item.content.ar);
+    $('#editContentAr').val(item.content.es);
     $('#editContentEn').val(item.content.en);
   }
 
@@ -935,10 +935,10 @@ function loadSections() {
         sectionsHTML += `
         <div class="col-lg-3 mb-4">
           <div class="card">
-            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title.ar}">
+            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title.es}">
             <div class="card-body">
-              <h5 class="card-title">${section.title.ar}</h5>
-              <p class="card-text">${section.description.ar}</p>
+              <h5 class="card-title">${section.title.es}</h5>
+              <p class="card-text">${section.description.es}</p>
               
               <button class="btn btn-primary btn-sm" onclick="viewCategories('${section.sectionId}')">Read More</button>
               
