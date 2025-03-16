@@ -1,6 +1,6 @@
 
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-// const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 //#region TOKEN
 // Check the token
@@ -132,7 +132,7 @@ $(document).ready(function () {
         headers: { 'Authorization': `Bearer ${token}` },
         success: function (data) {
           data.forEach(category => {
-            $('#categorySelect').append(`<option value="${category.categoryId}">${category.title.es}</option>`);
+            $('#categorySelect').append(`<option value="${category.categoryId}">${category.title?.es || category.title?.en || "category"}</option>`);
           });
         },
         error: function (err) {
@@ -603,11 +603,11 @@ document.getElementById('addSectionForm').addEventListener('submit', function(ev
         // en: document.getElementById('sectionTitleEn').value,
         es: document.getElementById('sectionTitleEs').value
     },
-    description: {
-        // ar: document.getElementById('sectionDescriptionAr').value,
-        // en: document.getElementById('sectionDescriptionEn').value,
-        es: document.getElementById('sectionDescriptionEs').value
-    },
+    // description: {
+    //     ar: document.getElementById('sectionDescriptionAr').value,
+    //     en: document.getElementById('sectionDescriptionEn').value,
+    //     es: document.getElementById('sectionDescriptionEs').value
+    // },
     imageUrl: document.getElementById('sectionImage').value,
     categories: [
         {
@@ -616,11 +616,11 @@ document.getElementById('addSectionForm').addEventListener('submit', function(ev
                 // en: document.getElementById('categoryTitleEn').value,
                 es: document.getElementById('categoryTitleEs').value
             },
-            description: {
-                // ar: document.getElementById('categoryDescriptionAr').value,
-                // en: document.getElementById('categoryDescriptionEn').value,
-                es: document.getElementById('categoryDescriptionEs').value
-            },
+            // description: {
+            //     ar: document.getElementById('categoryDescriptionAr').value,
+            //     en: document.getElementById('categoryDescriptionEn').value,
+            //     es: document.getElementById('categoryDescriptionEs').value
+            // },
             imageUrl: document.getElementById('categoryImage').value,
             subcategories: [
                 {
@@ -629,11 +629,11 @@ document.getElementById('addSectionForm').addEventListener('submit', function(ev
                         // en: document.getElementById('subCategoryTitleEn').value,
                         es: document.getElementById('subCategoryTitleEs').value
                     },
-                    description: {
-                        // ar: document.getElementById('subCategoryDescriptionAr').value,
-                        // en: document.getElementById('subCategoryDescriptionEn').value,
-                        es: document.getElementById('subCategoryDescriptionEs').value
-                    },
+                    // description: {
+                    //     ar: document.getElementById('subCategoryDescriptionAr').value,
+                    //     en: document.getElementById('subCategoryDescriptionEn').value,
+                    //     es: document.getElementById('subCategoryDescriptionEs').value
+                    // },
                     imageUrl: document.getElementById('subCategoryImage').value,
                     content: {
                         // ar: document.getElementById('subCategoryContentAr').value,
@@ -691,10 +691,9 @@ function viewCategories(sectionId) {
         categoriesHTML += `
           <div class="col-lg-3 mb-4">
             <div class="card">
-              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title.es}">
+              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title?.es || category.title?.en || "category img"}">
               <div class="card-body">
-                <h5 class="card-title">${category.title.es}</h5>
-                <p class="card-text">${category.description.es}</p>
+                <h5 class="card-title">${category.title?.es || category.title?.en || "category title"}</h5>
                 
                 <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${sectionId}', '${category.categoryId}')">Read More</button>
                 
@@ -757,10 +756,9 @@ function viewSubcategories(sectionId, categoryId) {
         subcategoriesHTML += `
                 <div class="col-lg-3 mb-4">
                   <div class="card">
-                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title.es}">
+                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title?.es || subcategory.title?.en || "category img"}">
                     <div class="card-body">
-                      <h5 class="card-title">${subcategory.title.es}</h5>
-                      <p class="card-text">${subcategory.description.es}</p>
+                      <h5 class="card-title">${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h5>
 
                       <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
 
@@ -793,7 +791,7 @@ function showContent(encodedData) {
   let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
 
   let contentHTML = `
-    <h3>${subcategory.title.es}</h3>
+    <h3>${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h3>
     <label for="languageSelect"><strong>Select Language:</strong></label>
     <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
       <option value="ar" selected>العربية</option>
@@ -849,32 +847,21 @@ function deleteSection(sectionId) {
 }
 
 function openEditPopup(type, parentId, item) {
-
-  $('#lblEditContentAr').hide();
-  $('#editContentAr').hide();
-
-  $('#lblEditContentEn').hide();
-  $('#editContentEn').hide();
+  $('#lblEditContentEs').hide();
+  $('#editContentEs').hide();
   console.log("section popup", type, parentId, item);
   $('#editId').val(item._id || item.sectionId || item.categoryId || item.subcategoryId);
   $('#editType').val(type);
-
-  $('#editTitleAr').val(item.title.es);
-  $('#editTitleEn').val(item.title.en);
-  $('#editDescriptionAr').val(item.description.es);
-  $('#editDescriptionEn').val(item.description.en);
+  $('#editTitleEs').val(item.title?.es || item.title?.en || '');
   $('#editImageUrl').val(item.imageUrl);
 
   if (type == "subcategory") {
     console.log("wwwwww", item);
-    $('#editContentAr').show();
-    $('#editContentEn').show();
-    $('#editContentAr').val(item.content.es);
-    $('#editContentEn').val(item.content.en);
+    $('#lblEditContentEs').show();
+    $('#editContentEs').show();
+    $('#editContentEs').val(item.content?.es || item.content?.en || '');
   }
-
   $('#editPopup').modal('show');
-
   // Store parentId to use it in the update if the edit is on a category or subcategory
   $('#editPopup').data('parentId', parentId || null);
 }
@@ -885,12 +872,14 @@ function saveChanges() {
   const parentId = $('#editPopup').data('parentId');
 
   const updatedData = {
-    title: { ar: $('#editTitleAr').val(), en: $('#editTitleEn').val() },
-    description: { ar: $('#editDescriptionAr').val(), en: $('#editDescriptionEn').val() },
+    // title: { ar: $('#editTitleAr').val(), en: $('#editTitleEn').val() },
+    title: { es: $('#editTitleEs').val() },
+
+    // description: { ar: $('#editDescriptionAr').val(), en: $('#editDescriptionEn').val() },
     imageUrl: $('#editImageUrl').val()
   };
   if (type == "subcategory") {
-    updatedData.content = { ar: $('#editContentAr').val(), en: $('#editContentEn').val() }
+    updatedData.content = { es: $('#editContentEs').val()}
 
   }
 
@@ -952,10 +941,9 @@ function loadSections() {
         sectionsHTML += `
         <div class="col-lg-3 mb-4">
           <div class="card">
-            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title.es}">
+            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title?.es || section.title?.es || "section title"}">
             <div class="card-body">
-              <h5 class="card-title">${section.title.es}</h5>
-              <p class="card-text">${section.description.es}</p>
+              <h5 class="card-title">${section.title?.es || section.title?.en || "section title"}</h5>
               
               <button class="btn btn-primary btn-sm" onclick="viewCategories('${section.sectionId}')">Read More</button>
               
