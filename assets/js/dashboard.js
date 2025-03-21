@@ -1,6 +1,6 @@
 
-const API_BASE_URL = 'https://user-api-server.onrender.com';
-// const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'https://user-api-server.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 //#region TOKEN
 // Check the token
@@ -14,26 +14,6 @@ $('#addArticleBtn').click(function () {
 });
 //#endregion
 
-
-// // Initialize Quill Editor
-// var quill = new Quill('#subCategoryContentEs', {
-//   theme: 'snow',
-//   modules: {
-//     toolbar: [
-//       ['bold', 'italic', 'underline', 'strike'],
-//       [{ header: [1, 2, 3, 4, 5, 6, false] }],
-//       [{ font: [] }],
-//       [{ size: ['small', false, 'large', 'huge'] }],
-//       [{ color: [] }, { background: [] }],
-//       [{ list: 'ordered' }, { list: 'bullet' }],
-//       [{ indent: '-1' }, { indent: '+1' }],
-//       [{ align: [] }],
-//       [{ direction: 'rtl' }],
-//       ['image','video', 'link', 'blockquote', 'code-block'],
-//       ['clean'],
-//     ],
-//   }
-// });
 $('#subCategoryContentEs').summernote({
   toolbar: [
     ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -60,6 +40,7 @@ $('#subCategoryEditContentEs').summernote({
     ['style', ['h1', 'h2', 'h3', 'p']] // إضافة العناوين والفقرات
   ]
 });
+
 
 //#region DOCUMENT READY
 //Document ready
@@ -125,304 +106,306 @@ $(document).ready(function () {
     loadArticles();
   });
 
-  $('#sectionsLink').on('click', function () {
-    loadSections();
-  });
+  // $('#sectionsLink').on('click', function () {
+  //   loadSections();
+  // });
+
+ 
 
 
-  loadSections1();
-  // عند تغيير اختيار القسم
-  $("#sectionSelect").change(function () {
-    let sectionId = $(this).val();
-    console.log("sectionSelect sectionId:", sectionId);
-    if (sectionId) {
-      loadCategories1(sectionId);
-      hideNewSectionInputs(); // Hide fields for adding a new section
-    } else {
-      $("#categorySelect").html('<option value="">Choose a category...</option>');
-      showNewSectionInputs(); // Show fields if no section is selected
-    }
-  });
+//   loadSections1();
+//   // عند تغيير اختيار القسم
+//   $("#sectionSelect").change(function () {
+//     let sectionId = $(this).val();
+//     console.log("sectionSelect sectionId:", sectionId);
+//     if (sectionId) {
+//       loadCategories1(sectionId);
+//       hideNewSectionInputs(); // Hide fields for adding a new section
+//     } else {
+//       $("#categorySelect").html('<option value="">Choose a category...</option>');
+//       showNewSectionInputs(); // Show fields if no section is selected
+//     }
+//   });
 
-// When the category selection changes
-  $("#categorySelect").change(function () {
-    let categoryId = $(this).val();
-    if (categoryId) {
-      loadSubcategories($("#sectionSelect").val(), categoryId);
-      hideNewCategoryInputs(); // Hide fields for adding a new category
-    } else {
-      showNewCategoryInputs(); // Show fields if no category is selected
-  }});
+// // When the category selection changes
+//   $("#categorySelect").change(function () {
+//     let categoryId = $(this).val();
+//     if (categoryId) {
+//       loadSubcategories($("#sectionSelect").val(), categoryId);
+//       hideNewCategoryInputs(); // Hide fields for adding a new category
+//     } else {
+//       showNewCategoryInputs(); // Show fields if no category is selected
+//   }});
   
-  $("#addSectionForm").submit(function (e) {
-    e.preventDefault();
+//   $("#addSectionForm").submit(function (e) {
+//     e.preventDefault();
 
-    let sectionId = $("#sectionSelect").val();
-    let categoryId = $("#categorySelect").val();
+//     let sectionId = $("#sectionSelect").val();
+//     let categoryId = $("#categorySelect").val();
 
-    let newSectionTitle = $("#sectionTitleEs").val();
-    let newSectionImage = $("#sectionImage").val();
-    let newCategoryTitle = $("#categoryTitleEs").val();
-    let newCategoryImage = $("#categoryImage").val();
-    let newSubcategoryTitle = $("#subCategoryTitleEs").val();
-    let newSubcategoryImage = $("#subCategoryImage").val();
-    let newSubcategoryContent = $("#subCategoryContentEs").val();
+//     let newSectionTitle = $("#sectionTitleEs").val();
+//     let newSectionImage = $("#sectionImage").val();
+//     let newCategoryTitle = $("#categoryTitleEs").val();
+//     let newCategoryImage = $("#categoryImage").val();
+//     let newSubcategoryTitle = $("#subCategoryTitleEs").val();
+//     let newSubcategoryImage = $("#subCategoryImage").val();
+//     let newSubcategoryContent = $("#subCategoryContentEs").val();
 
-    if (!sectionId && newSectionTitle) {
-      // 🟢 Create a new section with a category and subcategory
-      const sectionData = {
-        title: { es: newSectionTitle },
-        imageUrl: newSectionImage
-      };
+//     if (!sectionId && newSectionTitle) {
+//       // 🟢 Create a new section with a category and subcategory
+//       const sectionData = {
+//         title: { es: newSectionTitle },
+//         imageUrl: newSectionImage
+//       };
 
-      const categoryData = {
-        title: { es: newCategoryTitle },
-        imageUrl: newCategoryImage
-      };
+//       const categoryData = {
+//         title: { es: newCategoryTitle },
+//         imageUrl: newCategoryImage
+//       };
 
-      const subcategoryData = {
-        title: { es: newSubcategoryTitle },
-        content: { es: newSubcategoryContent },
-        imageUrl: newSubcategoryImage
-      };
+//       const subcategoryData = {
+//         title: { es: newSubcategoryTitle },
+//         content: { es: newSubcategoryContent },
+//         imageUrl: newSubcategoryImage
+//       };
 
-      createSectionWithCategoryAndSubcategory(sectionData, categoryData, subcategoryData);
-    } else if (sectionId && !categoryId && newCategoryTitle) {
-     // 🟢 Add a new category inside an existing section
-      const subcategoryData = {
-        title: { es: newSubcategoryTitle },
-        imageUrl: newSubcategoryImage,
-        content: { es: newSubcategoryContent }
-      };
-      const categoryData = {
-        title: { es: newCategoryTitle },
-        imageUrl: newCategoryImage,
-        subcategories: subcategoryData
-      };
+//       createSectionWithCategoryAndSubcategory(sectionData, categoryData, subcategoryData);
+//     } else if (sectionId && !categoryId && newCategoryTitle) {
+//      // 🟢 Add a new category inside an existing section
+//       const subcategoryData = {
+//         title: { es: newSubcategoryTitle },
+//         imageUrl: newSubcategoryImage,
+//         content: { es: newSubcategoryContent }
+//       };
+//       const categoryData = {
+//         title: { es: newCategoryTitle },
+//         imageUrl: newCategoryImage,
+//         subcategories: subcategoryData
+//       };
 
-      createCategory(sectionId, categoryData, subcategoryData);
-    } else if (sectionId && categoryId && newSubcategoryTitle) {
-     // 🟢 Add a new subcategory inside an existing category and section
-      const subcategoryData = {
-        title: { es: newSubcategoryTitle },
-        imageUrl: newSubcategoryImage,
-        content: { es: newSubcategoryContent }
-      };
+//       createCategory(sectionId, categoryData, subcategoryData);
+//     } else if (sectionId && categoryId && newSubcategoryTitle) {
+//      // 🟢 Add a new subcategory inside an existing category and section
+//       const subcategoryData = {
+//         title: { es: newSubcategoryTitle },
+//         imageUrl: newSubcategoryImage,
+//         content: { es: newSubcategoryContent }
+//       };
 
-      createSubcategory(sectionId, categoryId, subcategoryData);
-    } else {
-      alert("Please fill in the required fields.");
-    }
-  });
+//       createSubcategory(sectionId, categoryId, subcategoryData);
+//     } else {
+//       alert("Please fill in the required fields.");
+//     }
+//   });
 
 
-  function hideNewSectionInputs() {
-    $("#sectionTitleEs, #sectionImage").val("").removeAttr("required").parent().hide();
-  }
+//   function hideNewSectionInputs() {
+//     $("#sectionTitleEs, #sectionImage").val("").removeAttr("required").parent().hide();
+//   }
 
-  function showNewSectionInputs() {
-    $("#sectionTitleEs, #sectionImage").attr("required", "required").parent().show();
-  }
+//   function showNewSectionInputs() {
+//     $("#sectionTitleEs, #sectionImage").attr("required", "required").parent().show();
+//   }
 
-  function hideNewCategoryInputs() {
-    $("#categoryTitleEs, #categoryImage").val("").removeAttr("required").parent().hide();
-  }
+//   function hideNewCategoryInputs() {
+//     $("#categoryTitleEs, #categoryImage").val("").removeAttr("required").parent().hide();
+//   }
 
-  function showNewCategoryInputs() {
-    $("#categoryTitleEs, #categoryImage").attr("required", "required").parent().show();
-  }
+//   function showNewCategoryInputs() {
+//     $("#categoryTitleEs, #categoryImage").attr("required", "required").parent().show();
+//   }
 
 });
 
-// **Load sections**
-function loadSections1() {
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/sections`,
-    type: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (sections) {
-      let options = '<option value="">Choose a section...</option>';
-      sections.forEach(section => {
-        options += `<option value="${section.sectionId}">${section.title.es}</option>`;
-      });
-      console.log("Loaded sections:", sections);
-      console.log("options", options);
-      $("#sectionSelect").html(options);
-    },
-    error: function () {
-      alert("Failed to load sections.");
-    }
-  });
-}
+// // **Load sections**
+// function loadSections1() {
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/sections`,
+//     type: "GET",
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (sections) {
+//       let options = '<option value="">Choose a section...</option>';
+//       sections.forEach(section => {
+//         options += `<option value="${section.sectionId}">${section.title.es}</option>`;
+//       });
+//       console.log("Loaded sections:", sections);
+//       console.log("options", options);
+//       $("#sectionSelect").html(options);
+//     },
+//     error: function () {
+//       alert("Failed to load sections.");
+//     }
+//   });
+// }
 
-// **Load categories based on the selected section**
-function loadCategories1(sectionId) {
-  console.log("loadCategories1 sectionId:", sectionId);
+// // **Load categories based on the selected section**
+// function loadCategories1(sectionId) {
+//   console.log("loadCategories1 sectionId:", sectionId);
 
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories`,
-    type: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (categories) {
-      let options = '<option value="">Choose a category...</option>';
-      console.log("Loaded categories:", categories);
-      categories.forEach(category => {
-        options += `<option value="${category.categoryId}">${category.title.es}</option>`;
-      });
-      $("#categorySelect").html(options);
-    },
-    error: function () {
-      alert("Failed to load categories.");
-    }
-  });
-}
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories`,
+//     type: "GET",
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (categories) {
+//       let options = '<option value="">Choose a category...</option>';
+//       console.log("Loaded categories:", categories);
+//       categories.forEach(category => {
+//         options += `<option value="${category.categoryId}">${category.title.es}</option>`;
+//       });
+//       $("#categorySelect").html(options);
+//     },
+//     error: function () {
+//       alert("Failed to load categories.");
+//     }
+//   });
+// }
 
-// **Load subcategories based on the selected section and category**
-function loadSubcategories(sectionId, categoryId) {
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories/${categoryId}/subcategories`,
-    type: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (subcategories) {
-      console.log("Loaded subcategories:", subcategories);
-    },
-    error: function () {
-      alert("Failed to load subcategories.");
-    }
-  });
-}
+// // **Load subcategories based on the selected section and category**
+// function loadSubcategories(sectionId, categoryId) {
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories/${categoryId}/subcategories`,
+//     type: "GET",
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (subcategories) {
+//       console.log("Loaded subcategories:", subcategories);
+//     },
+//     error: function () {
+//       alert("Failed to load subcategories.");
+//     }
+//   });
+// }
 
-// **Add a section, category, or subcategory based on the inputs**
-function addNewSectionOrCategoryOrSubcategory() {
-  let sectionId = $("#sectionSelect").val();
-  let categoryId = $("#categorySelect").val();
-  let newSectionTitle = $("#sectionTitleEs").val();
-  let newSectionImage = $("#sectionImage").val();
-  let newCategoryTitle = $("#categoryTitleEs").val();
-  let newCategoryImage = $("#categoryImage").val();
-  let newSubcategoryTitle = $("#subCategoryTitleEs").val();
-  let newSubcategoryImage = $("#subCategoryImage").val();
-  let newSubcategoryContent = $("#subCategoryContentEs").val();
+// // **Add a section, category, or subcategory based on the inputs**
+// function addNewSectionOrCategoryOrSubcategory() {
+//   let sectionId = $("#sectionSelect").val();
+//   let categoryId = $("#categorySelect").val();
+//   let newSectionTitle = $("#sectionTitleEs").val();
+//   let newSectionImage = $("#sectionImage").val();
+//   let newCategoryTitle = $("#categoryTitleEs").val();
+//   let newCategoryImage = $("#categoryImage").val();
+//   let newSubcategoryTitle = $("#subCategoryTitleEs").val();
+//   let newSubcategoryImage = $("#subCategoryImage").val();
+//   let newSubcategoryContent = $("#subCategoryContentEs").val();
 
-  let data = {};
+//   let data = {};
 
-  if (!sectionId && newSectionTitle) {
-    data = {
-      title: { es: newSectionTitle },
-      imageUrl: newSectionImage,
-      categories: []
-    };
-    createSection(data);
-  } else if (sectionId && !categoryId && newCategoryTitle) {
-    data = {
-      title: { es: newCategoryTitle },
-      imageUrl: newCategoryImage,
-      subcategories: []
-    };
-    createCategory(sectionId, data);
-  } else if (sectionId && categoryId && newSubcategoryTitle) {
-    data = {
-      title: { es: newSubcategoryTitle },
-      imageUrl: newSubcategoryImage,
-      content: { es: newSubcategoryContent }
-    };
-    createSubcategory(sectionId, categoryId, data);
-  } else {
-    alert("Please fill in the required fields.");
-  }
-}
+//   if (!sectionId && newSectionTitle) {
+//     data = {
+//       title: { es: newSectionTitle },
+//       imageUrl: newSectionImage,
+//       categories: []
+//     };
+//     createSection(data);
+//   } else if (sectionId && !categoryId && newCategoryTitle) {
+//     data = {
+//       title: { es: newCategoryTitle },
+//       imageUrl: newCategoryImage,
+//       subcategories: []
+//     };
+//     createCategory(sectionId, data);
+//   } else if (sectionId && categoryId && newSubcategoryTitle) {
+//     data = {
+//       title: { es: newSubcategoryTitle },
+//       imageUrl: newSubcategoryImage,
+//       content: { es: newSubcategoryContent }
+//     };
+//     createSubcategory(sectionId, categoryId, data);
+//   } else {
+//     alert("Please fill in the required fields.");
+//   }
+// }
 
-function createSectionWithCategoryAndSubcategory(sectionData, categoryData, subcategoryData) {
-  // تحضير الفئة الجديدة مع الفئة الفرعية داخلها
-  const newCategory = {
-    title: { es: categoryData.title.es },
-    imageUrl: categoryData.imageUrl,
-    subcategories: [
-      {
-        title: { es: subcategoryData.title.es },
-        content: { es: subcategoryData.content.es },
-        imageUrl: subcategoryData.imageUrl
-      }
-    ]
-  };
+// function createSectionWithCategoryAndSubcategory(sectionData, categoryData, subcategoryData) {
+//   // تحضير الفئة الجديدة مع الفئة الفرعية داخلها
+//   const newCategory = {
+//     title: { es: categoryData.title.es },
+//     imageUrl: categoryData.imageUrl,
+//     subcategories: [
+//       {
+//         title: { es: subcategoryData.title.es },
+//         content: { es: subcategoryData.content.es },
+//         imageUrl: subcategoryData.imageUrl
+//       }
+//     ]
+//   };
 
-  // إضافة الفئة إلى بيانات القسم
-  sectionData.categories = [newCategory]; // إضافة الفئة إلى القسم الجديد
+//   // إضافة الفئة إلى بيانات القسم
+//   sectionData.categories = [newCategory]; // إضافة الفئة إلى القسم الجديد
 
-  // إرسال القسم الجديد مع الفئة والفئة الفرعية
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections`,
-    type: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify(sectionData), // إرسال البيانات مع الفئة والفئة الفرعية
-    success: function () {
-      alert("Section with Category and Subcategory added successfully!");
-      loadSections1(); // إعادة تحميل الأقسام بعد إضافة القسم الجديد
-    },
-    error: function () {
-      alert("Failed to add section with category and subcategory.");
-    }
-  });
-}
+//   // إرسال القسم الجديد مع الفئة والفئة الفرعية
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections`,
+//     type: "POST",
+//     headers: { Authorization: `Bearer ${token}` },
+//     contentType: "application/json",
+//     data: JSON.stringify(sectionData), // إرسال البيانات مع الفئة والفئة الفرعية
+//     success: function () {
+//       alert("Section with Category and Subcategory added successfully!");
+//       loadSections1(); // إعادة تحميل الأقسام بعد إضافة القسم الجديد
+//     },
+//     error: function () {
+//       alert("Failed to add section with category and subcategory.");
+//     }
+//   });
+// }
 
-// **Send request to create a new section**
-function createSection(data) {
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections`,
-    type: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function () {
-      alert("Section added successfully!");
-      loadSections1();
-    },
-    error: function () {
-      alert("Failed to add section.");
-    }
-  });
-}
+// // **Send request to create a new section**
+// function createSection(data) {
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections`,
+//     type: "POST",
+//     headers: { Authorization: `Bearer ${token}` },
+//     contentType: "application/json",
+//     data: JSON.stringify(data),
+//     success: function () {
+//       alert("Section added successfully!");
+//       loadSections1();
+//     },
+//     error: function () {
+//       alert("Failed to add section.");
+//     }
+//   });
+// }
 
-// **Send request to add a new category inside an existing section**
-function createCategory(sectionId, data) {
-  console.log("sectionId in createCategory:", sectionId);
-  console.log("data in createCategory:", data);
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories`,
-    type: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function () {
-      alert("Category added successfully!");
-      loadCategories1(sectionId);
-    },
-    error: function () {
-      alert("Failed to add category.");
-    }
-  });
-}
+// // **Send request to add a new category inside an existing section**
+// function createCategory(sectionId, data) {
+//   console.log("sectionId in createCategory:", sectionId);
+//   console.log("data in createCategory:", data);
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories`,
+//     type: "POST",
+//     headers: { Authorization: `Bearer ${token}` },
+//     contentType: "application/json",
+//     data: JSON.stringify(data),
+//     success: function () {
+//       alert("Category added successfully!");
+//       loadCategories1(sectionId);
+//     },
+//     error: function () {
+//       alert("Failed to add category.");
+//     }
+//   });
+// }
 
-// **Send request to add a new subcategory inside an existing category and section**
-function createSubcategory(sectionId, categoryId, data) {
-  console.log("sectionId in createSubcategory:", sectionId);
-  console.log("categoryId in createSubcategory:", categoryId);
-  console.log("data in createSubcategory:", data);
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories/${categoryId}/subcategories`,
-    type: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify(data),
-    success: function () {
-      alert("Subcategory added successfully!");
-    },
-    error: function () {
-      alert("Failed to add subcategory.");
-    }
-  });
-}
+// // **Send request to add a new subcategory inside an existing category and section**
+// function createSubcategory(sectionId, categoryId, data) {
+//   console.log("sectionId in createSubcategory:", sectionId);
+//   console.log("categoryId in createSubcategory:", categoryId);
+//   console.log("data in createSubcategory:", data);
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/form/sections/${sectionId}/categories/${categoryId}/subcategories`,
+//     type: "POST",
+//     headers: { Authorization: `Bearer ${token}` },
+//     contentType: "application/json",
+//     data: JSON.stringify(data),
+//     success: function () {
+//       alert("Subcategory added successfully!");
+//     },
+//     error: function () {
+//       alert("Failed to add subcategory.");
+//     }
+//   });
+// }
 
 //#endregion
 // Load users
@@ -834,10 +817,7 @@ function deleteArticle(articleId) {
     });
   }
 }
-//#endregion
 
-
-//#region SECTION METHODS
 // Send data to the server when adding an article
 $('#addArticleForm').on('submit', function (e) {
   e.preventDefault();
@@ -873,140 +853,209 @@ $('#addArticleForm').on('submit', function (e) {
     }
   });
 });
+//#endregion
+//#region SECTION METHODS
 
 
-// Fetch categories when clicking on "Read More" for the section
-function viewCategories(sectionId) {
-  console.log("viewCategories sectionId", sectionId);
-  $('#content').html('<h3>Loading Categories...</h3>');
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/section/${sectionId}/categories`,
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (response) {
-      let categoriesHTML = `<h3>Categories</h3><div class="row">`;
+// // Fetch categories when clicking on "Read More" for the section
+// function viewCategories(sectionId) {
+//   console.log("viewCategories sectionId", sectionId);
+//   $('#content').html('<h3>Loading Categories...</h3>');
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/section/${sectionId}/categories`,
+//     method: 'GET',
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (response) {
+//       let categoriesHTML = `<h3>Categories</h3><div class="row">`;
 
-      response.forEach(category => {
-        console.log(category);
-        const isChecked = category.status === 'Published' ? 'checked' : '';
-        const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
+//       response.forEach(category => {
+//         console.log(category);
+//         const isChecked = category.status === 'Published' ? 'checked' : '';
+//         const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
 
-        categoriesHTML += `
-          <div class="col-lg-3 mb-4">
-            <div class="card">
-              <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title?.es || category.title?.en || "category img"}">
-              <div class="card-body">
-                <h5 class="card-title">${category.title?.es || category.title?.en || "category title"}</h5>
+//         categoriesHTML += `
+//           <div class="col-lg-3 mb-4">
+//             <div class="card">
+//               <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title?.es || category.title?.en || "category img"}">
+//               <div class="card-body">
+//                 <h5 class="card-title">${category.title?.es || category.title?.en || "category title"}</h5>
                 
-                <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${sectionId}', '${category.categoryId}')">Read More</button>
+//                 <button class="btn btn-primary btn-sm" onclick="viewSubcategories('${sectionId}', '${category.categoryId}')">Read More</button>
                 
-                <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${sectionId}', ${safeCategoryData})">Edit</button>
+//                 <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${sectionId}', ${safeCategoryData})">Edit</button>
 
-                <button class="btn btn-danger btn-sm" onclick="deleteCategory('${sectionId}', '${category.categoryId}')">Delete</button>
+//                 <button class="btn btn-danger btn-sm" onclick="deleteNewCategory('${sectionId}', '${category.categoryId}')">Delete</button>
 
-                <div class="form-check form-switch mt-2">
-                  <input class="form-check-input" type="checkbox" role="switch" id="switch-${category.categoryId}"
-                    ${isChecked} onclick="sectionToggleStatus('category', '${category.categoryId}', this.checked)">
-                  <label class="form-check-label" for="switch-${category.categoryId}">
-                    ${category.status}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>`;
-      });
+//                 <div class="form-check form-switch mt-2">
+//                   <input class="form-check-input" type="checkbox" role="switch" id="switch-${category.categoryId}"
+//                     ${isChecked} onclick="sectionToggleStatus('category', '${category.categoryId}', this.checked)">
+//                   <label class="form-check-label" for="switch-${category.categoryId}">
+//                     ${category.status}
+//                   </label>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>`;
+//       });
 
-      categoriesHTML += '</div>';
-      $('#content').html(categoriesHTML);
-    },
-    error: function () {
-      $('#content').html('<p class="text-danger">Failed to load categories.</p>');
-    },
-  });
-}
+//       categoriesHTML += '</div>';
+//       $('#content').html(categoriesHTML);
+//     },
+//     error: function () {
+//       $('#content').html('<p class="text-danger">Failed to load categories.</p>');
+//     },
+//   });
+// }
 
-// Convert text to Base64 with UTF-8 support
-function encodeBase64(str) {
-  return btoa(unescape(encodeURIComponent(str)));
-}
+// function viewNewCategories(sectionId) {
+//   console.log("viewCategories sectionId", sectionId);
+//   $('#content').html('<h3>Loading Categories...</h3>');
+//   $.ajax({
+//     url: `${API_BASE_URL}/newsection/section/${sectionId}/categories`,
+//     method: 'GET',
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (response) {
+//       let categoriesHTML = `<h3>Categories</h3><div class="row">`;
 
-// Decode Base64 to text with UTF-8 support
-function decodeBase64(str) {
-  return decodeURIComponent(escape(atob(str)));
-}
+//       response.forEach(category => {
+//         console.log(category);
+//         const isChecked = category.status === 'Published' ? 'checked' : '';
+//         const safeCategoryData = JSON.stringify(category).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
+//         const encodedData = encodeBase64(JSON.stringify(category));
+//         categoriesHTML += `
+//           <div class="col-lg-3 mb-4">
+//             <div class="card">
+//               <img src="${category.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${category.title?.es || category.title?.en || "category img"}">
+//               <div class="card-body">
+//                 <h5 class="card-title">${category.title?.es || category.title?.en || "category title"}</h5>
+                
+//                 <button class="btn btn-primary btn-sm" onclick="viewCategoryContent('${encodedData}')">Read More</button>
+                
+//                 <button class="btn btn-warning btn-sm" onclick="openEditPopup('category', '${sectionId}', ${safeCategoryData})">Edit</button>
 
-// Fetch subcategories when clicking on "Read More" for the category
-function viewSubcategories(sectionId, categoryId) {
-  console.log("sectionId", sectionId);
-  console.log("categoryId", categoryId);
+//                 <button class="btn btn-danger btn-sm" onclick="deleteNewCategory('${sectionId}', '${category.categoryId}')">Delete</button>
 
-  $('#content').html('<h3>Loading Subcategories...</h3>');
+//                 <div class="form-check form-switch mt-2">
+//                   <input class="form-check-input" type="checkbox" role="switch" id="switch-${category.categoryId}"
+//                     ${isChecked} onclick="sectionToggleStatus('category', '${category.categoryId}', this.checked)">
+//                   <label class="form-check-label" for="switch-${category.categoryId}">
+//                     ${category.status}
+//                   </label>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>`;
+//       });
 
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/section/${sectionId}/category/${categoryId}/subcategories`,
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (response) {
-      let subcategoriesHTML = `<h3>Subcategories</h3><div class="row">`;
+//       categoriesHTML += '</div>';
+//       $('#content').html(categoriesHTML);
+//     },
+//     error: function () {
+//       $('#content').html('<p class="text-danger">Failed to load categories.</p>');
+//     },
+//   });
+// }
 
-      response.forEach(subcategory => {
-        console.log("subcategory", subcategory);
-        const isChecked = subcategory.status === 'Published' ? 'checked' : '';
+// // Convert text to Base64 with UTF-8 support
+// function encodeBase64(str) {
+//   return btoa(unescape(encodeURIComponent(str)));
+// }
 
-        // ✅ Convert subcategory data to Base64 using UTF-8
-        const encodedData = encodeBase64(JSON.stringify(subcategory));
+// // Decode Base64 to text with UTF-8 support
+// function decodeBase64(str) {
+//   return decodeURIComponent(escape(atob(str)));
+// }
 
-        subcategoriesHTML += `
-                <div class="col-lg-3 mb-4">
-                  <div class="card">
-                    <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title?.es || subcategory.title?.en || "category img"}">
-                    <div class="card-body">
-                      <h5 class="card-title">${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h5>
+// // Fetch subcategories when clicking on "Read More" for the category
+// function viewSubcategories(sectionId, categoryId) {
+//   console.log("sectionId", sectionId);
+//   console.log("categoryId", categoryId);
 
-                      <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
+//   $('#content').html('<h3>Loading Subcategories...</h3>');
 
-                      <button class="btn btn-warning btn-sm" onclick="openEditPopup('subcategory', '${categoryId}', '${encodedData}')">Edit</button>
-                      <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${sectionId}', '${categoryId}', '${subcategory.subcategoryId}')">Delete</button>
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/section/${sectionId}/category/${categoryId}/subcategories`,
+//     method: 'GET',
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (response) {
+//       let subcategoriesHTML = `<h3>Subcategories</h3><div class="row">`;
 
-                      <div class="form-check form-switch mt-2">
-                        <input class="form-check-input" type="checkbox" role="switch" id="switch-${subcategory.subcategoryId}"
-                          ${isChecked} onclick="sectionToggleStatus('subcategory', '${subcategory.subcategoryId}', this.checked)">
-                        <label class="form-check-label" for="switch-${subcategory.subcategoryId}">
-                          ${subcategory.status}
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>`;
-      });
+//       response.forEach(subcategory => {
+//         console.log("subcategory", subcategory);
+//         const isChecked = subcategory.status === 'Published' ? 'checked' : '';
 
-      subcategoriesHTML += '</div>';
-      $('#content').html(subcategoriesHTML);
-    },
-    error: function () {
-      $('#content').html('<p class="text-danger">Failed to load subcategories.</p>');
-    },
-  });
-}
+//         // ✅ Convert subcategory data to Base64 using UTF-8
+//         const encodedData = encodeBase64(JSON.stringify(subcategory));
 
-// Display content when clicking on "Read More"
-function showContent(encodedData) {
-  let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
+//         subcategoriesHTML += `
+//                 <div class="col-lg-3 mb-4">
+//                   <div class="card">
+//                     <img src="${subcategory.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${subcategory.title?.es || subcategory.title?.en || "category img"}">
+//                     <div class="card-body">
+//                       <h5 class="card-title">${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h5>
 
-  let contentHTML = `
-    <h3>${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h3>
-    <label for="languageSelect"><strong>Select Language:</strong></label>
-    <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
-      <option value="ar" selected>العربية</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-    </select>
-    <div id="contentDisplay" class="mt-3">
-      <p>${subcategory.content.es}</p>
-    </div>`;
+//                       <button class="btn btn-primary btn-sm" onclick="showContent('${encodedData}')">Read More</button>
 
-  $('#content').html(contentHTML);
-}
+//                       <button class="btn btn-warning btn-sm" onclick="openEditPopup('subcategory', '${categoryId}', '${encodedData}')">Edit</button>
+//                       <button class="btn btn-danger btn-sm" onclick="deleteSubcategory('${sectionId}', '${categoryId}', '${subcategory.subcategoryId}')">Delete</button>
+
+//                       <div class="form-check form-switch mt-2">
+//                         <input class="form-check-input" type="checkbox" role="switch" id="switch-${subcategory.subcategoryId}"
+//                           ${isChecked} onclick="sectionToggleStatus('subcategory', '${subcategory.subcategoryId}', this.checked)">
+//                         <label class="form-check-label" for="switch-${subcategory.subcategoryId}">
+//                           ${subcategory.status}
+//                         </label>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>`;
+//       });
+
+//       subcategoriesHTML += '</div>';
+//       $('#content').html(subcategoriesHTML);
+//     },
+//     error: function () {
+//       $('#content').html('<p class="text-danger">Failed to load subcategories.</p>');
+//     },
+//   });
+// }
+
+// function viewCategoryContent(encodedData) {
+//  let category = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
+
+//   let contentHTML = `
+//     <h3>${category.title?.es || category.title?.en || "subcategory title"}</h3>
+//     <label for="languageSelect"><strong>Select Language:</strong></label>
+//     <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
+//       <option value="ar" selected>العربية</option>
+//       <option value="en">English</option>
+//       <option value="es">Español</option>
+//     </select>
+//     <div id="contentDisplay" class="mt-3">
+//       <p>${category.content.es}</p>
+//     </div>`;
+
+//   $('#content').html(contentHTML);
+// }
+
+// // Display content when clicking on "Read More"
+// function showContent(encodedData) {
+//   let subcategory = JSON.parse(decodeBase64(encodedData)); // ✅ Decode Base64 with UTF-8 support
+
+//   let contentHTML = `
+//     <h3>${subcategory.title?.es || subcategory.title?.en || "subcategory title"}</h3>
+//     <label for="languageSelect"><strong>Select Language:</strong></label>
+//     <select id="languageSelect" class="form-select" onchange="updateContent('${encodedData}')">
+//       <option value="ar" selected>العربية</option>
+//       <option value="en">English</option>
+//       <option value="es">Español</option>
+//     </select>
+//     <div id="contentDisplay" class="mt-3">
+//       <p>${subcategory.content.es}</p>
+//     </div>`;
+
+//   $('#content').html(contentHTML);
+// }
 
 // Update the content when changing the language
 function updateContent(encodedData) {
@@ -1015,168 +1064,172 @@ function updateContent(encodedData) {
   $('#contentDisplay').html(`<p>${subcategory.content[selectedLang]}</p>`);
 }
 
-function openEditPopup(type, parentId, item) {
-  $('#lblEditContentEs').hide();
-  $('#subCategoryEditContentEs').hide();
-  console.log("section popup", type, parentId, item);
-  $('#editId').val(item._id || item.sectionId || item.categoryId || item.subcategoryId);
-  $('#editType').val(type);
-  $('#editTitleEs').val(item.title?.es || item.title?.en || '');
-  $('#editImageUrl').val(item.imageUrl);
+// function openEditPopup(type, parentId, item) {
+//   $('#lblEditContentEs').hide();
+//   $('#subCategoryEditContentEs').hide();
+//   console.log("section popup", type, parentId, item);
+//   $('#editId').val(item._id || item.sectionId || item.categoryId || item.subcategoryId);
+//   $('#editType').val(type);
+//   $('#editTitleEs').val(item.title?.es || item.title?.en || '');
+//   $('#editImageUrl').val(item.imageUrl);
 
-  if (type == "subcategory") {
-    console.log("wwwwww", item);
-    $('#lblEditContentEs').show();
-    $('#subCategoryEditContentEs').show();
-    $('#subCategoryEditContentEs').val(item.content?.es || item.content?.en || '');
-  }
-  $('#editPopup').modal('show');
-  // Store parentId to use it in the update if the edit is on a category or subcategory
-  $('#editPopup').data('parentId', parentId || null);
-}
-
-function saveChanges() {
-  const type = $('#editType').val();
-  const id = $('#editId').val();
-  const parentId = $('#editPopup').data('parentId');
-
-  const updatedData = {
-    // title: { ar: $('#editTitleAr').val(), en: $('#editTitleEn').val() },
-    title: { es: $('#editTitleEs').val() },
-
-    // description: { ar: $('#editDescriptionAr').val(), en: $('#editDescriptionEn').val() },
-    imageUrl: $('#editImageUrl').val()
-  };
-  if (type == "subcategory") {
-    updatedData.content = { es: $('#editContentEs').val() }
-
-  }
-
-  console.log("updatedData", updatedData);
-  let url = `${API_BASE_URL}/dashboard/${type}/${parentId}`;
-  console.log("url sevice", url);
-
-  console.log("type", type);
-  console.log("id", id);
-  // let url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
-
-  if (type === 'category') {
-    console.log("url category", url);
-    url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
-  } else if (type === 'subcategory') {
-    console.log("url subcategory", url);
-
-    url = `${API_BASE_URL}/dashboard/section/${parentId.split('-')[0]}/category/${parentId.split('-')[1]}/subcategory/${id}`;
-  }
-
-  $.ajax({
-    url: url,
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    data: JSON.stringify(updatedData),
-    success: function () {
-      $('#editPopup').modal('hide');
-      alert('Updated successfully!');
-
-      // Reload the data based on what was edited
-      if (type === 'section') {
-        loadSections();
-      } else if (type === 'category') {
-        viewCategories(parentId);
-      } else if (type === 'subcategory') {
-        viewSubcategories(parentId.split('-')[0], parentId.split('-')[1]);
-      }
-    },
-    error: function () {
-      alert('Failed to update.');
-    }
-  });
-}
-
-// Update the publication status
-function sectionToggleStatus(type, id, isChecked) {
-  const newStatus = isChecked ? 'Published' : 'Unpublished';
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/${type}/${id}/status`,
-    method: 'PATCH',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    data: JSON.stringify({ status: newStatus }),
-    success: function () {
-      $(`#switch-${id}`).next().text(newStatus);
-      alert(type + ' updated successfully.');
-    },
-    error: function () {
-      alert('Failed to update status.');
-    },
-  });
-}
-
-// Delete item
-function deleteSection(sectionId) {
-  if (confirm('Are you sure you want to delete this section?')) {
-    $.ajax({
-      url: `${API_BASE_URL}/dashboard/section/${sectionId}`,
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-      success: function () {
-        loadSections();
-      },
-      error: function () {
-        alert('Failed to delete section.');
-      },
-    });
-  }
-}
+//   if (type == "subcategory") {
+//     console.log("wwwwww", item);
+//     $('#lblEditContentEs').show();
+//     $('#subCategoryEditContentEs').show();
+//     $('#subCategoryEditContentEs').val(item.content?.es || item.content?.en || '');
+//   }
+//   $('#editPopup').modal('show');
+//   // Store parentId to use it in the update if the edit is on a category or subcategory
+//   $('#editPopup').data('parentId', parentId || null);
+// }
 
 
-function loadSections() {
-  $('#content').html('<h3>Loading Sections...</h3>');
-  $.ajax({
-    url: `${API_BASE_URL}/dashboard/sections`,
 
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` },
-    success: function (response) {
-      let sectionsHTML = '<h3>Sections</h3><div class="row">';
-      console.log(response);
-      response.forEach(section => {
-        const isChecked = section.status === 'Published' ? 'checked' : '';
-        const safeSectionData = JSON.stringify(section).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
+// function saveChanges() {
+//   const type = $('#editType').val();
+//   const id = $('#editId').val();
+//   const parentId = $('#editPopup').data('parentId');
 
-        sectionsHTML += `
-        <div class="col-lg-3 mb-4">
-          <div class="card">
-            <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title?.es || section.title?.es || "section title"}">
-            <div class="card-body">
-              <h5 class="card-title">${section.title?.es || section.title?.en || "section title"}</h5>
+//   const updatedData = {
+//     // title: { ar: $('#editTitleAr').val(), en: $('#editTitleEn').val() },
+//     title: { es: $('#editTitleEs').val() },
+
+//     // description: { ar: $('#editDescriptionAr').val(), en: $('#editDescriptionEn').val() },
+//     imageUrl: $('#editImageUrl').val()
+//   };
+//   if (type == "subcategory") {
+//     updatedData.content = { es: $('#editContentEs').val() }
+
+//   }
+
+//   console.log("updatedData", updatedData);
+//   let url = `${API_BASE_URL}/dashboard/${type}/${parentId}`;
+//   console.log("url sevice", url);
+
+//   console.log("type", type);
+//   console.log("id", id);
+//   // let url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
+
+//   if (type === 'category') {
+//     console.log("url category", url);
+//     url = `${API_BASE_URL}/dashboard/section/${parentId}/category/${id}`;
+//   } else if (type === 'subcategory') {
+//     console.log("url subcategory", url);
+
+//     url = `${API_BASE_URL}/dashboard/section/${parentId.split('-')[0]}/category/${parentId.split('-')[1]}/subcategory/${id}`;
+//   }
+
+//   $.ajax({
+//     url: url,
+//     method: 'PUT',
+//     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+//     data: JSON.stringify(updatedData),
+//     success: function () {
+//       $('#editPopup').modal('hide');
+//       alert('Updated successfully!');
+
+//       // Reload the data based on what was edited
+//       if (type === 'section') {
+//         loadSections();
+//       } else if (type === 'category') {
+//         viewCategories(parentId);
+//       } else if (type === 'subcategory') {
+//         viewSubcategories(parentId.split('-')[0], parentId.split('-')[1]);
+//       }
+//     },
+//     error: function () {
+//       alert('Failed to update.');
+//     }
+//   });
+// }
+
+// // Update the publication status
+// function sectionToggleStatus(type, id, isChecked) {
+//   const newStatus = isChecked ? 'Published' : 'Unpublished';
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/${type}/${id}/status`,
+//     method: 'PATCH',
+//     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+//     data: JSON.stringify({ status: newStatus }),
+//     success: function () {
+//       $(`#switch-${id}`).next().text(newStatus);
+//       alert(type + ' updated successfully.');
+//     },
+//     error: function () {
+//       alert('Failed to update status.');
+//     },
+//   });
+// }
+
+// // Delete item
+// function deleteSection(sectionId) {
+//   if (confirm('Are you sure you want to delete this section?')) {
+//     $.ajax({
+//       url: `${API_BASE_URL}/dashboard/section/${sectionId}`,
+//       method: 'DELETE',
+//       headers: { Authorization: `Bearer ${token}` },
+//       success: function () {
+//         loadSections();
+//       },
+//       error: function () {
+//         alert('Failed to delete section.');
+//       },
+//     });
+//   }
+// }
+
+
+// function loadSections() {
+//   $('#content').html('<h3>Loading Sections...</h3>');
+//   $.ajax({
+//     url: `${API_BASE_URL}/dashboard/sections`,
+
+//     method: 'GET',
+//     headers: { Authorization: `Bearer ${token}` },
+//     success: function (response) {
+//       let sectionsHTML = '<h3>Sections</h3><div class="row">';
+//       console.log(response);
+//       response.forEach(section => {
+//         const isChecked = section.status === 'Published' ? 'checked' : '';
+//         const safeSectionData = JSON.stringify(section).replace(/"/g, '&quot;'); // ✅ Fix issue with passing the object inside `onclick`
+
+//         sectionsHTML += `
+//         <div class="col-lg-3 mb-4">
+//           <div class="card">
+//             <img src="${section.imageUrl || 'default-image.jpg'}" class="card-img-top" alt="${section.title?.es || section.title?.es || "section title"}">
+//             <div class="card-body">
+//               <h5 class="card-title">${section.title?.es || section.title?.en || "section title"}</h5>
               
-              <button class="btn btn-primary btn-sm" onclick="viewCategories('${section.sectionId}')">Read More</button>
+//               <button class="btn btn-primary btn-sm" onclick="viewCategories('${section.sectionId}')">Read More</button>
               
 
-              <button class="btn btn-warning btn-sm" onclick="openEditPopup('section', '${section.sectionId}', ${safeSectionData})">Edit</button>
+//               <button class="btn btn-warning btn-sm" onclick="openEditPopup('section', '${section.sectionId}', ${safeSectionData})">Edit</button>
 
-              <button class="btn btn-danger btn-sm" onclick="deleteSection('${section.sectionId}')">Delete</button>
+//               <button class="btn btn-danger btn-sm" onclick="deleteSection('${section.sectionId}')">Delete</button>
 
-              <!-- Switch Toggle for Publish/Unpublish -->
-              <div class="form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" role="switch" id="switch-${section.sectionId}"
-                  ${isChecked} onclick="sectionToggleStatus('section', '${section.sectionId}', this.checked)">
-                <label class="form-check-label" for="switch-${section.sectionId}">
-                  ${section.status}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>`;
-      });
+//               <!-- Switch Toggle for Publish/Unpublish -->
+//               <div class="form-check form-switch mt-2">
+//                 <input class="form-check-input" type="checkbox" role="switch" id="switch-${section.sectionId}"
+//                   ${isChecked} onclick="sectionToggleStatus('section', '${section.sectionId}', this.checked)">
+//                 <label class="form-check-label" for="switch-${section.sectionId}">
+//                   ${section.status}
+//                 </label>
+//               </div>
+//             </div>
+//           </div>
+//         </div>`;
+//       });
 
-      sectionsHTML += '</div>';
-      $('#content').html(sectionsHTML);
-    },
-    error: function () {
-      $('#content').html('<p class="text-danger">Failed to load sections.</p>');
-    },
-  });
-}
+//       sectionsHTML += '</div>';
+//       $('#content').html(sectionsHTML);
+//     },
+//     error: function () {
+//       $('#content').html('<p class="text-danger">Failed to load sections.</p>');
+//     },
+//   });
+// }
+
+
 
 //#endregion
